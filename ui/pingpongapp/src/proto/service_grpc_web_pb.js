@@ -21,7 +21,7 @@ proto.main = require('./service_pb.js');
 /**
  * @param {string} hostname
  * @param {?Object} credentials
- * @param {?Object} options
+ * @param {?grpc.web.ClientOptions} options
  * @constructor
  * @struct
  * @final
@@ -29,7 +29,7 @@ proto.main = require('./service_pb.js');
 proto.main.PingPongClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'text';
+  options.format = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -47,7 +47,7 @@ proto.main.PingPongClient =
 /**
  * @param {string} hostname
  * @param {?Object} credentials
- * @param {?Object} options
+ * @param {?grpc.web.ClientOptions} options
  * @constructor
  * @struct
  * @final
@@ -55,7 +55,7 @@ proto.main.PingPongClient =
 proto.main.PingPongPromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
-  options['format'] = 'text';
+  options.format = 'text';
 
   /**
    * @private @const {!grpc.web.GrpcWebClientBase} The client
@@ -93,30 +93,11 @@ const methodDescriptor_PingPong_Ping = new grpc.web.MethodDescriptor(
 
 
 /**
- * @const
- * @type {!grpc.web.AbstractClientBase.MethodInfo<
- *   !proto.main.PingRequest,
- *   !proto.main.PongResponse>}
- */
-const methodInfo_PingPong_Ping = new grpc.web.AbstractClientBase.MethodInfo(
-  proto.main.PongResponse,
-  /**
-   * @param {!proto.main.PingRequest} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.main.PongResponse.deserializeBinary
-);
-
-
-/**
  * @param {!proto.main.PingRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.Error, ?proto.main.PongResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.main.PongResponse)}
  *     callback The callback function(error, response)
  * @return {!grpc.web.ClientReadableStream<!proto.main.PongResponse>|undefined}
  *     The XHR Node Readable Stream
@@ -135,7 +116,7 @@ proto.main.PingPongClient.prototype.ping =
 /**
  * @param {!proto.main.PingRequest} request The
  *     request proto
- * @param {?Object<string, string>} metadata User defined
+ * @param {?Object<string, string>=} metadata User defined
  *     call metadata
  * @return {!Promise<!proto.main.PongResponse>}
  *     Promise that resolves to the response
