@@ -9,6 +9,14 @@ frontinit:
 frontbuild:
 	(cd ui/pingpongapp/ && yarn build)
 
+docker:
+	docker-compose up --build -d
+
+# run migrations locally
+mup:
+	go run cmd/migrate/migrate.go up
+mdown:
+	go run cmd/migrate/migrate.go down
 
 setup:
 	(rm -rf pingpong/*.pb.go && rm -rf ui/pingpongapp/src/proto/*)

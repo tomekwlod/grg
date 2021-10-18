@@ -14,3 +14,10 @@ run:
 - (cd ui/pingpongapp && yarn && yarn build)
 - open localhost:8080
 - in case of error like: `service_grpc_web_pb.js:101 Uncaught TypeError: Cannot read properties of undefined (reading 'MethodInfo')` follow this: `https://stackoverflow.com/a/69582682/1800372` (basically you need to be sure you're usign the version 1.3.0 or above of `protoc-gen-grpc-web`)
+
+create database first:
+```
+CREATE USER pingpong WITH ENCRYPTED PASSWORD 'password-here';
+CREATE DATABASE pingpong OWNER pingpong;
+GRANT ALL PRIVILEGES ON DATABASE pingpong TO pingpong;
+```

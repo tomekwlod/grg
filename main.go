@@ -1,13 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"time"
 
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
+	"github.com/joho/godotenv"
+	"github.com/tomekwlod/grg/db"
 	"github.com/tomekwlod/grg/pingpong"
+	"github.com/tomekwlod/utils/env"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -16,7 +20,29 @@ type grpcMultiplexer struct {
 	*grpcweb.WrappedGrpcServer
 }
 
+var dbConn *db.DB
+
 func main() {
+
+	err := godotenv.Load()
+
+	if err != nil {
+		log.Fatalf("No .env file detected")
+	}
+
+	dbURL := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		env.Env("POSTGRES_HOST", "localhost"),
+		env.Env("POSTGRES_PORT", "5432"),
+		env.Env("POSTGRES_USER", "pingpong"),
+		env.Env("POSTGRES_PASSWORD", ""),
+		env.Env("POSTGRES_DB", "pingpong"),
+		env.Env("POSTGRES_SSLMODE", "disable"))
+
+	dbConn, err = db.PostgresConnection(dbURL)
+	if err != nil {
+		log.Fatalf("error while connecting to db %v", err)
+	}
+	defer dbConn.Close()
 
 	apiServer, err := GenerateTLSApi("cert/server.crt", "cert/server.key")
 

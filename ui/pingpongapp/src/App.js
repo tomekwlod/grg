@@ -24,7 +24,7 @@ function App() {
 
   useEffect(() => {
     // Start a interval each 3 seconds which calls sendPing.
-    const interval = setInterval(() => sendPing(), 3000);
+    const interval = setInterval(() => sendPing(), 1000);
     return () => {
       // reset timer
       clearInterval(interval);
@@ -35,7 +35,16 @@ function App() {
   // we need to + '' to convert it into a string
   return (
     <div className="App">
-      <p>Status: {status + ""}</p>
+      <p>
+        Status:{" "}
+        <span
+          style={
+            status ? { backgroundColor: "green" } : { backgroundColor: "red" }
+          }
+        >
+          {status + ""}
+        </span>
+      </p>
     </div>
   );
 }

@@ -3,12 +3,16 @@ module github.com/tomekwlod/grg
 go 1.16
 
 require (
+	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/improbable-eng/grpc-web v0.14.1
-	github.com/klauspost/compress v1.13.6 // indirect
+	github.com/jackc/fake v0.0.0-20150926172116-812a484cc733 // indirect
+	github.com/jackc/pgx v3.6.2+incompatible
+	github.com/jmoiron/sqlx v1.3.4
+	github.com/joho/godotenv v1.4.0
 	github.com/rs/cors v1.8.0 // indirect
+	github.com/tomekwlod/utils v0.0.0-20210516215220-b2b82d6194fc
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/sys v0.0.0-20211015200801-69063c4bb744 // indirect
-	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/genproto v0.0.0-20211016002631-37fc39342514 // indirect
 	google.golang.org/grpc v1.41.0
 	google.golang.org/protobuf v1.27.1
