@@ -2,12 +2,10 @@ package core
 
 import (
 	"context"
-
-	"github.com/tomekwlod/grg/db"
 )
 
 type PingStore interface {
-	Get(context.Context, db.Querier, *Ping) error
+	Get(context.Context, *Ping) error
 }
 
 type Ping struct {

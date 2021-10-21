@@ -7,14 +7,14 @@ import (
 	"github.com/tomekwlod/grg/db"
 )
 
-func New(db *db.DB) core.PingStore {
+func New(db db.Dber) core.PingStore {
 	return &pingStore{db}
 }
 
 type pingStore struct {
-	db *db.DB
+	db db.Dber
 }
 
-func (p *pingStore) Get(ctx context.Context, db db.Querier, ping *core.Ping) error {
-	return db.QueryRowContext(ctx, "SELECT id, val FROM ping LIMIT 1").Scan(&ping.ID, &ping.Val)
+func (p *pingStore) Get(ctx context.Context, ping *core.Ping) error {
+	return p.db.QueryRowContext(ctx, "SELECT id, val FROM ping LIMIT 1").Scan(&ping.ID, &ping.Val)
 }

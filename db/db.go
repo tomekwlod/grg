@@ -5,16 +5,14 @@ import (
 	"database/sql"
 
 	_ "github.com/jackc/pgx/stdlib"
+
 	// _ "github.com/jackc/pgx/v4/pgxpool"
 	"github.com/jmoiron/sqlx"
 )
 
-type Querier interface {
+type Dber interface {
 	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
 	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
-}
-type Execer interface {
-	Querier
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
 }
 
@@ -25,10 +23,6 @@ type Execer interface {
 type DB struct {
 	*sqlx.DB
 }
-
-// type DBPool struct {
-// 	*pgx.ConnPool
-// }
 
 // just to count the total amount of the transactions
 var transactions int = 0
@@ -60,60 +54,6 @@ func PostgresConnection(connString string) (*DB, error) {
 
 	return p, nil
 }
-
-// func PostgresConnectionPool(connString string) (*DBPool, error) {
-
-// 	logrus.Debug("Connecting to PostgreSQL DB with:", connString)
-
-// 	connConfig, err := pgx.ParseConnectionString(connString)
-
-// 	connPool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
-// 		ConnConfig:     connConfig,
-// 		AfterConnect:   nil,
-// 		MaxConnections: 20,
-// 		AcquireTimeout: 30 * time.Second,
-// 	})
-// 	if err != nil {
-
-// 		return nil, errors.Wrap(err, "Call to pgx.NewConnPool failed")
-// 	}
-// 	p := &DBPool{connPool}
-
-// 	return p, nil
-
-// 	// nativeDB := stdlib.OpenDBFromPool(connPool)
-// 	// if err != nil {
-// 	// 	connPool.Close()
-// 	// 	return nil, errors.Wrap(err, "Call to stdlib.OpenFromConnPool failed")
-// 	// }
-// 	// db, err := sqlx.NewDb(nativeDB, "pgx"), nil
-// 	// if err != nil {
-// 	// 	return nil, errors.Wrap(err, "Call to pgx.NewConnPool failed")
-// 	// }
-// 	// p := &DBPool{db}
-
-// 	// return p, nil
-// 	// return
-
-// 	// db, err := sqlx.Connect("pgx", connString)
-// 	// if err != nil {
-
-// 	// 	return nil, err
-// 	// }
-
-// 	// // Open doesn't open a connection. Validate DSN data:
-// 	// err = db.Ping()
-// 	// if err != nil {
-
-// 	// 	return nil, err
-// 	// }
-
-// 	// logrus.Debug("Successfully connected to postgress")
-
-// 	// p := &DBPool{db}
-
-// 	// return p, nil
-// }
 
 func (conn *DB) Transact(txFunc func(*sqlx.Tx) error) (err error) {
 

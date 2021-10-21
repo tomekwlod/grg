@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/pingpong"
 	pingstore "github.com/tomekwlod/grg/store/ping"
@@ -18,11 +19,12 @@ func (s *Server) Ping(ctx context.Context, p *pingpong.PingRequest) (*pingpong.P
 
 	ping := core.Ping{}
 
-	err := pingstore.New(dbConn).Get(ctx, dbConn, &ping)
+	err := dbConn.Transact(func(tx *sqlx.Tx) (err error) {
+		return pingstore.New(tx).Get(ctx, &ping)
+	})
 
 	if err != nil {
 		log.Printf("Error while pinging DB, %v\n", err)
-		output = false
 	}
 
 	output = ping.Val
