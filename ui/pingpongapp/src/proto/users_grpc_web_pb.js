@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for main
+ * @fileoverview gRPC-Web generated client stub for users
  * @enhanceable
  * @public
  */
@@ -16,7 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.main = require('./service_pb.js');
+proto.users = require('./users_pb.js');
 
 /**
  * @param {string} hostname
@@ -26,7 +26,7 @@ proto.main = require('./service_pb.js');
  * @struct
  * @final
  */
-proto.main.PingServiceClient =
+proto.users.UserServiceClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -52,7 +52,7 @@ proto.main.PingServiceClient =
  * @struct
  * @final
  */
-proto.main.PingServicePromiseClient =
+proto.users.UserServicePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -73,63 +73,63 @@ proto.main.PingServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.main.PingRequest,
- *   !proto.main.PongResponse>}
+ *   !proto.users.NewUser,
+ *   !proto.users.User>}
  */
-const methodDescriptor_PingService_Ping = new grpc.web.MethodDescriptor(
-  '/main.PingService/Ping',
+const methodDescriptor_UserService_Create = new grpc.web.MethodDescriptor(
+  '/users.UserService/Create',
   grpc.web.MethodType.UNARY,
-  proto.main.PingRequest,
-  proto.main.PongResponse,
+  proto.users.NewUser,
+  proto.users.User,
   /**
-   * @param {!proto.main.PingRequest} request
+   * @param {!proto.users.NewUser} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.main.PongResponse.deserializeBinary
+  proto.users.User.deserializeBinary
 );
 
 
 /**
- * @param {!proto.main.PingRequest} request The
+ * @param {!proto.users.NewUser} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.main.PongResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.users.User)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.main.PongResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.users.User>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.main.PingServiceClient.prototype.ping =
+proto.users.UserServiceClient.prototype.create =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/main.PingService/Ping',
+      '/users.UserService/Create',
       request,
       metadata || {},
-      methodDescriptor_PingService_Ping,
+      methodDescriptor_UserService_Create,
       callback);
 };
 
 
 /**
- * @param {!proto.main.PingRequest} request The
+ * @param {!proto.users.NewUser} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.main.PongResponse>}
+ * @return {!Promise<!proto.users.User>}
  *     Promise that resolves to the response
  */
-proto.main.PingServicePromiseClient.prototype.ping =
+proto.users.UserServicePromiseClient.prototype.create =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/main.PingService/Ping',
+      '/users.UserService/Create',
       request,
       metadata || {},
-      methodDescriptor_PingService_Ping);
+      methodDescriptor_UserService_Create);
 };
 
 
-module.exports = proto.main;
+module.exports = proto.users;
 

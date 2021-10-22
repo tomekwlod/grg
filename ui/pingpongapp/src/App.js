@@ -1,10 +1,10 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { PingPongClient } from "./proto/service_grpc_web_pb";
+import { PingServiceClient } from "./proto/service_grpc_web_pb";
 import { PingRequest } from "./proto/service_pb";
 
 // We create a client that connects to the api
-var client = new PingPongClient("https://localhost:8080");
+var client = new PingServiceClient("https://localhost:8080");
 
 function App() {
   // Create a const named status and a function called setStatus

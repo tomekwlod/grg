@@ -10,7 +10,8 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/joho/godotenv"
 	"github.com/tomekwlod/grg/db"
-	"github.com/tomekwlod/grg/pingpong"
+	"github.com/tomekwlod/grg/pb"
+	"github.com/tomekwlod/grg/services"
 	"github.com/tomekwlod/utils/env"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -60,11 +61,13 @@ func main() {
 	// In GRPC cases, the Server is acutally just an Interface
 	// So we need a struct which fulfills the server interface
 	// see server.go
-	s := &Server{}
+	// I MOVED THIS LINE BELOW
+	// s := services.NewPingService(dbConn)
 
 	// Register the API server as a PingPong Server
 	// The register function is a generated piece by protoc.
-	pingpong.RegisterPingPongServer(apiServer, s)
+	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
+	pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
 	// Start serving in a goroutine to not block
 	go func() {
