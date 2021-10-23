@@ -67,7 +67,8 @@ func main() {
 	// Register the API server as a PingPong Server
 	// The register function is a generated piece by protoc.
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
-	pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
+	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
+	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
 	// Start serving in a goroutine to not block
 	go func() {

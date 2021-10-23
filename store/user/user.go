@@ -16,5 +16,6 @@ type userStore struct {
 }
 
 func (u *userStore) Create(ctx context.Context, user *core.User) error {
+	// fmt.Println(u.db.QueryRowContext(ctx, "INSERT INTO users (password, email) VALUES ($1,$2) RETURNING id", user.Password, user.Email).Scan(&user.ID))
 	return u.db.QueryRowContext(ctx, "INSERT INTO users (password, email) VALUES ($1,$2) RETURNING id", user.Password, user.Email).Scan(&user.ID)
 }

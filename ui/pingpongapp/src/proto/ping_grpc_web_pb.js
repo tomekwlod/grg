@@ -16,7 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.main = require('./service_pb.js');
+proto.main = require('./ping_pb.js');
 
 /**
  * @param {string} hostname

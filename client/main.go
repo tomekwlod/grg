@@ -4,10 +4,11 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"io/ioutil"
 	"log"
 
-	"github.com/tomekwlod/grg/pingpong"
+	"github.com/tomekwlod/grg/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -27,9 +28,18 @@ func main() {
 	defer conn.Close()
 
 	// A new GRPC client to use
-	client := pingpong.NewPingPongClient(conn)
+	client := pb.NewPingServiceClient(conn)
+	users := pb.NewUserServiceClient(conn)
 
-	pong, err := client.Ping(ctx, &pingpong.PingRequest{})
+	user, err := users.Create(ctx, &pb.NewUser{Email: "test", Password: "pass"})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("New user created with ID:%d\n", user.Id)
+
+	pong, err := client.Ping(ctx, &pb.PingRequest{})
 
 	if err != nil {
 		log.Fatal(err)

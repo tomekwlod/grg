@@ -54,12 +54,18 @@ func main() {
 	case "down":
 		err = m.Down()
 		break
+	case "oneup":
+		err = m.Steps(1)
+		break
+	case "onedown":
+		err = m.Steps(-1)
+		break
 	default:
 		break
 	}
 
 	if err != nil {
-		if err.Error() == "no change" {
+		if err.Error() == "no change" || err.Error() == "file does not exist" {
 			log.Println("Database up to date")
 		} else {
 			log.Fatalf("Error while executing migration: `%v`", err)

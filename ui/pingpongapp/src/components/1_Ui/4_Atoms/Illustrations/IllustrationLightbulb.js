@@ -1,0 +1,150 @@
+import React from "react";
+import { Box } from "../../";
+
+export const IllustrationLightbulb = (props) => (
+  <Box
+    as="svg"
+    viewBox="0 0 85 100"
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <g
+      id="Page-1-Copy"
+      stroke="none"
+      strokeWidth="1"
+      fill="none"
+      fillRule="evenodd"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <g id="About-Us" transform="translate(-393.000000, -555.000000)">
+        <g id="Group-16" transform="translate(369.000000, 538.000000)">
+          <g id="Group-29" transform="translate(25.000000, 18.000000)">
+            <path
+              d="M51.6835031,89 L30.321049,89 L30.3104833,72.6561677 C30.3089739,70.4157603 29.0576862,68.3906609 27.087927,67.314121 C17.7311932,62.2009331 11.5109803,52.0919981 12.0302118,40.5858197 C12.7064204,25.7039737 25.2011844,13.4494872 40.1275822,13.0128486 C56.5422426,12.5310406 70,25.6618155 70,41.927354 C70,52.8674079 63.9111044,62.390645 54.9287003,67.3050871 C52.9513941,68.3876496 51.6850125,70.4142546 51.6850125,72.6652016 L51.6835031,89 Z"
+              id="Stroke-1"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></path>
+            <path
+              d="M41.4992584,98 L41.4992584,98 C37.358054,98 34,94.6429866 34,90.4997528 L34,89 L49,89 L49,90.4997528 C49,94.6429866 45.641946,98 41.4992584,98 Z"
+              id="Stroke-3"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></path>
+            <line
+              x1="31"
+              y1="74"
+              x2="52"
+              y2="74"
+              id="Stroke-5"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+            <path
+              d="M36.3333333,74 L36.3333333,38.6160283 C36.3333333,36.0661063 34.2442174,34 31.6674359,34 C29.089116,34 27,36.0661063 27,38.6160283 C27,41.1644289 29.089116,43.2305352 31.6674359,43.2305352 L50.3341025,43.2305352 C52.910884,43.2305352 55,41.1644289 55,38.6160283 C55,36.0661063 52.910884,34 50.3341025,34 C47.7557826,34 45.6666667,36.0661063 45.6666667,38.6160283 L45.6666667,74"
+              id="Stroke-7"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></path>
+            <line
+              x1="31"
+              y1="81"
+              x2="52"
+              y2="81"
+              id="Stroke-9"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+            <g filter="url(#filter-1)" id="Group-15">
+              <g transform="translate(6.000000, 0.000000)">
+                <line
+                  x1="35"
+                  y1="0"
+                  x2="35"
+                  y2="6"
+                  id="Stroke-11"
+                  stroke="#492462"
+                  strokeWidth="2"
+                ></line>
+                <line
+                  x1="0"
+                  y1="21"
+                  x2="5"
+                  y2="24"
+                  id="Stroke-15"
+                  stroke="#492462"
+                  strokeWidth="2"
+                ></line>
+                <line
+                  x1="0"
+                  y1="62"
+                  x2="5"
+                  y2="59"
+                  id="Stroke-19"
+                  stroke="#492462"
+                  strokeWidth="2"
+                ></line>
+                <line
+                  x1="71"
+                  y1="21"
+                  x2="66"
+                  y2="24"
+                  id="Stroke-25"
+                  stroke="#492462"
+                  strokeWidth="2"
+                ></line>
+              </g>
+            </g>
+            <line
+              x1="21"
+              y1="6"
+              x2="24"
+              y2="11"
+              id="Stroke-13"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+            <line
+              x1="0"
+              y1="41"
+              x2="6"
+              y2="41"
+              id="Stroke-17"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+            <line
+              x1="77"
+              y1="62"
+              x2="72"
+              y2="59"
+              id="Stroke-21"
+              stroke="#492462"
+              strokeWidth="2"
+            ></line>
+            <line
+              x1="83"
+              y1="41"
+              x2="77"
+              y2="41"
+              id="Stroke-23"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+            <line
+              x1="62"
+              y1="6"
+              x2="59"
+              y2="11"
+              id="Stroke-27"
+              stroke="#D04256"
+              strokeWidth="2"
+            ></line>
+          </g>
+        </g>
+      </g>
+    </g>
+  </Box>
+);

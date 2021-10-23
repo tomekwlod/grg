@@ -3,8 +3,8 @@ cert:
 
 protogen:
 	(cd proto \
-		&& protoc service.proto --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
-		&& protoc users.proto   --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/)
+		&& protoc ping.proto  --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
+		&& protoc users.proto --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/)
 
 frontinit:
 	(cd ui/pingpongapp/ && yarn)
@@ -17,8 +17,12 @@ docker:
 # run migrations locally
 mup:
 	go run cmd/migrate/migrate.go up
+moneup:
+	go run cmd/migrate/migrate.go oneup
 mdown:
 	go run cmd/migrate/migrate.go down
+monedown:
+	go run cmd/migrate/migrate.go onedown
 
 setup:
 	(rm -rf pingpong/*.pb.go && rm -rf ui/pingpongapp/src/proto/*)
@@ -28,3 +32,4 @@ setup:
 
 run:
 	go run .
+frun: frontbuild run

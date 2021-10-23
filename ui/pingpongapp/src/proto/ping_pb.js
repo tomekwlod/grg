@@ -1,4 +1,4 @@
-// source: service.proto
+// source: ping.proto
 /**
  * @fileoverview
  * @enhanceable
