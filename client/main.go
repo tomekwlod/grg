@@ -29,6 +29,15 @@ func main() {
 
 	// A new GRPC client to use
 	client := pb.NewPingServiceClient(conn)
+
+	pong, err := client.Ping(ctx, &pb.PingRequest{})
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(pong)
+
 	users := pb.NewUserServiceClient(conn)
 
 	user, err := users.Create(ctx, &pb.NewUser{Email: "test", Password: "pass"})
@@ -38,14 +47,6 @@ func main() {
 	}
 
 	fmt.Printf("New user created with ID:%d\n", user.Id)
-
-	pong, err := client.Ping(ctx, &pb.PingRequest{})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println(pong)
 }
 
 // loadTLSCfg will load a certificate and create a tls config

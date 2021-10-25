@@ -20,6 +20,13 @@ type PingService struct {
 	db *db.DB
 }
 
+// This is to allow unauthenticated access!
+// It implements methods that are intercepted by AuthFuncOverride
+func (ps *PingService) AuthFuncOverride(ctx context.Context, fullMethodName string) (context.Context, error) {
+	log.Println("client is calling (UNAUTHANTICATED) method:", fullMethodName)
+	return ctx, nil
+}
+
 func (ps *PingService) Ping(ctx context.Context, p *pb.PingRequest) (*pb.PongResponse, error) {
 	var output bool = true
 

@@ -14,6 +14,7 @@ func NewUserService(db *db.DB) *UserService {
 	return &UserService{db: db}
 }
 
+// implements methods that are intercepted by AuthFunc - only authenticated access!
 type UserService struct {
 	pb.UnimplementedUserServiceServer
 	db *db.DB

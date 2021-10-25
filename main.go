@@ -7,8 +7,11 @@ import (
 	"net/http"
 	"time"
 
+	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpcauth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/joho/godotenv"
+	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/db"
 	"github.com/tomekwlod/grg/pb"
 	"github.com/tomekwlod/grg/services"
@@ -21,7 +24,11 @@ type grpcMultiplexer struct {
 	*grpcweb.WrappedGrpcServer
 }
 
-var dbConn *db.DB
+var (
+	dbConn *db.DB
+	secret string = "thisIsSecretToSignTokens"
+	ath    *auth.Auth
+)
 
 func main() {
 
@@ -45,7 +52,9 @@ func main() {
 	}
 	defer dbConn.Close()
 
-	apiServer, err := GenerateTLSApi("cert/server.crt", "cert/server.key")
+	ath := auth.NewAuth(secret)
+
+	apiServer, err := GenerateTLSApi("cert/server.crt", "cert/server.key", ath.AuthFunc)
 
 	if err != nil {
 		log.Fatalf("Problem with spinning up a server: %s", err)
@@ -107,14 +116,19 @@ func main() {
 	log.Fatal(srv.ListenAndServeTLS("cert/server.crt", "cert/server.key"))
 }
 
-func GenerateTLSApi(pemPath, keyPath string) (*grpc.Server, error) {
+func GenerateTLSApi(pemPath, keyPath string, ath grpcauth.AuthFunc) (*grpc.Server, error) {
 	cred, err := credentials.NewServerTLSFromFile(pemPath, keyPath)
 
 	if err != nil {
 		return nil, err
 	}
 
-	s := grpc.NewServer(grpc.Creds(cred))
+	s := grpc.NewServer(
+		grpc.Creds(cred),
+		grpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(
+			grpcauth.UnaryServerInterceptor(ath),
+		)),
+	)
 
 	return s, nil
 }
