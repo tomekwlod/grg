@@ -24,6 +24,7 @@ const (
 
 type Claims struct {
 	Username string `json:"username"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
@@ -55,8 +56,8 @@ func (a *Auth) AuthFunc(ctx context.Context) (context.Context, error) {
 	return newCtx, nil
 }
 
-func validateToken(tokenString string, secretSigningKey []byte) (username string, err error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+func validateToken(tokenString string, secretSigningKey []byte) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -65,19 +66,16 @@ func validateToken(tokenString string, secretSigningKey []byte) (username string
 	})
 
 	if err != nil {
-		return
+		return nil, fmt.Errorf("invalid token: %w", err)
 	}
 
-	claims, ok := token.Claims.(jwt.MapClaims)
+	claims, ok := token.Claims.(*Claims)
 
 	if ok && token.Valid {
-		username = claims["username"].(string)
-		return
+		return claims, nil
 	}
 
-	err = fmt.Errorf("could not validate")
-
-	return
+	return nil, fmt.Errorf("could not validate")
 }
 
 /// to check and use!
@@ -85,10 +83,11 @@ func validateToken(tokenString string, secretSigningKey []byte) (username string
 ///
 ///
 ///
-func GenerateToken(username string, signingSecret []byte) (string, error) {
+func GenerateToken(username, role string, signingSecret []byte) (string, error) {
 	// Create the Claims
 	claims := Claims{
 		username,
+		role,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(1)).Unix(),
 			Issuer:    "AuthFunc",
@@ -96,10 +95,6 @@ func GenerateToken(username string, signingSecret []byte) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString(signingSecret)
-	if err != nil {
-		return signedToken, err
-	}
 
-	return signedToken, nil
+	return token.SignedString(signingSecret)
 }

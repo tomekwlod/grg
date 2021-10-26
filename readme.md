@@ -21,3 +21,34 @@ CREATE USER pingpong WITH ENCRYPTED PASSWORD 'password-here';
 CREATE DATABASE pingpong OWNER pingpong;
 GRANT ALL PRIVILEGES ON DATABASE pingpong TO pingpong;
 ```
+
+
+# INFO
+
+## GRPC
+### GRPC AUTH
+- https://www.reddit.com/r/golang/comments/gg99xe/communicate_between_grpc_microservices_with_jwt/ - general chat about the auth with grpc
+- https://github.com/tegk/grpcMiddlewareAuthentication - simple examples
+- ... and corresponding article https://tillknuesting.medium.com/grpc-http-basic-auth-oauth2-bearer-tokens-f088b5a2314
+- https://shijuvar.medium.com/writing-grpc-interceptors-in-go-bf3e7671fe48
+- https://github.com/johanbrandhorst/grpc-auth-example
+- https://dev.to/techschoolguru/use-grpc-interceptor-for-authorization-with-jwt-1c5h - some nice examples of the auth, jwt, users, mutex
+
+### GRPC PROTO EXAMPLES
+- https://github.com/mortenson/grpc-game-example/blob/master/proto/main.proto
+- https://github.com/stevejgordon/gRPC-Demos/blob/master/Proto/weather.proto
+- https://github.com/cirocosta/gupload/blob/master/messaging/service.proto
+- https://github.com/jergoo/go-grpc-tutorial/blob/master/src/proto/compile.sh - compiling more protos
+- https://github.com/zhuge20100104/grpc-demo/blob/master/grpc-15/server/gen.bat - also compiling more protos (also cert example)
+
+### GRPC Videos
+- https://www.youtube.com/watch?v=QmIdWTidEa8 - simple example
+
+### GRPC Articles
+- https://itnext.io/using-grpc-with-tls-golang-and-react-no-envoy-92e898bf8463 - WEB+GRPC+REACT no envoy
+- https://medium.com/swlh/building-a-realtime-dashboard-with-reactjs-go-grpc-and-envoy-7be155dfabfb - WEB with envoy, but nice STREAM example
+
+
+## General info
+- https://quii.gitbook.io/learn-go-with-tests/build-an-application/json - go with tests (tdd)
+- https://github.com/drone/drone/blob/master/store/batch/batch_test.go - great place for referencing stuff, like store, postgres, tests
