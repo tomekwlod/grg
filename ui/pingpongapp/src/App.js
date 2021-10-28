@@ -4,12 +4,15 @@ import { PingServiceClient } from "./proto/ping_grpc_web_pb";
 import { PingRequest } from "./proto/ping_pb";
 import { UserServiceClient } from "./proto/users_grpc_web_pb";
 import { NewUser } from "./proto/users_pb";
+import { AuthServiceClient } from "./proto/auth_grpc_web_pb";
+import { LoginRequest } from "./proto/auth_pb";
 
 import { Box, ButtonPrimary, FormTextInput } from "./components";
 
 // We create a client that connects to the api
 var pingClient = new PingServiceClient("https://localhost:8080");
 var usersClient = new UserServiceClient("https://localhost:8080");
+var authClient = new AuthServiceClient("https://localhost:8080");
 
 function App() {
   // Create a const named status and a function called setStatus
@@ -18,6 +21,8 @@ function App() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [user, setUser] = useState({});
 
   const createUser = () => {
     var newUser = new NewUser();
@@ -58,6 +63,22 @@ function App() {
       }
     });
   };
+
+  useEffect(() => {
+    var loginRequest = new LoginRequest();
+    loginRequest.setEmail = "twl@phase-ii.com";
+
+    authClient.login(loginRequest, null, function (err, response) {
+      if (response && response != null) {
+        // serialize the response to an object
+        var user = response.toObject();
+        // call setStatus to change the value of status
+        setUser(user);
+      } else {
+        setUser({});
+      }
+    });
+  }, []);
 
   useEffect(() => {
     // Start a interval each 3 seconds which calls sendPing.
@@ -125,6 +146,8 @@ function App() {
             Submit
           </ButtonPrimary>
         </Box>
+
+        <Box>user: {user.email}</Box>
       </form>
     </div>
   );

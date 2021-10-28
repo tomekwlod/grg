@@ -27,7 +27,9 @@ type grpcMultiplexer struct {
 var (
 	dbConn *db.DB
 	secret string = "thisIsSecretToSignTokens"
-	ath    *auth.Auth
+	// tokenDuration - not in use just yet
+	tokenDuration = 15 * time.Minute
+	ath           *auth.Auth
 )
 
 func main() {
@@ -52,6 +54,7 @@ func main() {
 	}
 	defer dbConn.Close()
 
+	// initialize the auth interceptor/middleware
 	ath := auth.NewAuth(secret)
 
 	apiServer, err := GenerateTLSApi("cert/server.crt", "cert/server.key", ath.AuthFunc)
@@ -77,6 +80,7 @@ func main() {
 	// The register function is a generated piece by protoc.
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
+	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath))
 	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
 	// Start serving in a goroutine to not block
