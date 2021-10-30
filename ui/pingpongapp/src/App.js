@@ -15,9 +15,11 @@ var usersClient = new UserServiceClient("https://localhost:8080");
 var authClient = new AuthServiceClient("https://localhost:8080");
 
 function App() {
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+
   // Create a const named status and a function called setStatus
   const [status, setStatus] = useState(false);
-  const [message, setMessage] = useState("");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,6 +55,15 @@ function App() {
     // use the client to send our pingrequest, the function that is passed
     // as the third param is a callback.
     pingClient.ping(pingRequest, null, function (err, response) {
+      if (err != null) {
+        let e = errors;
+        e[err.message] = err;
+        setErrors(e);
+
+        setStatus(false);
+        return;
+      }
+
       if (response && response != null) {
         // serialize the response to an object
         var pong = response.toObject();
@@ -66,16 +77,23 @@ function App() {
 
   useEffect(() => {
     var loginRequest = new LoginRequest();
-    loginRequest.setEmail = "twl@phase-ii.com";
+    loginRequest.setEmail("this@is.email.com");
+    loginRequest.setPassword("password");
 
     authClient.login(loginRequest, null, function (err, response) {
+      if (err != null) {
+        let e = errors;
+        e[err.message] = err;
+        setErrors(e);
+        setUser({});
+        return;
+      }
+
       if (response && response != null) {
         // serialize the response to an object
         var user = response.toObject();
         // call setStatus to change the value of status
         setUser(user);
-      } else {
-        setUser({});
       }
     });
   }, []);
@@ -147,8 +165,15 @@ function App() {
           </ButtonPrimary>
         </Box>
 
-        <Box>user: {user.email}</Box>
+        <Box>user: {console.log(user)}</Box>
       </form>
+      <div className="errors">
+        {Object.keys(errors).length > 0
+          ? Object.keys(errors).map((k) => {
+              return errors[k].message;
+            })
+          : "-"}
+      </div>
     </div>
   );
 }

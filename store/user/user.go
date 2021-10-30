@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 
+	// _ "github.com/jackc/pgx/stdlib"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/db"
 )

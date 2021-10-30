@@ -35,9 +35,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	var user *core.User
 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
-		fmt.Println("echo 1")
 		user, err = userstore.New(tx).Find(ctx, req.GetEmail())
-		fmt.Println("echo 2")
 
 		if err != nil {
 			return status.Errorf(codes.Internal, "cannot find user: %v", err)
