@@ -34,4 +34,6 @@ setup:
 
 run:
 	go run .
-frun: frontbuild run
+fbrun: frontbuild run
+frun: 
+	(cd ui/pingpongapp/ && yarn start)

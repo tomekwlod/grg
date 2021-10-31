@@ -131,5 +131,66 @@ proto.users.UserServicePromiseClient.prototype.create =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.users.UsersParams,
+ *   !proto.users.Users>}
+ */
+const methodDescriptor_UserService_List = new grpc.web.MethodDescriptor(
+  '/users.UserService/List',
+  grpc.web.MethodType.UNARY,
+  proto.users.UsersParams,
+  proto.users.Users,
+  /**
+   * @param {!proto.users.UsersParams} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.users.Users.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.users.UsersParams} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.users.Users)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.users.Users>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.users.UserServiceClient.prototype.list =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/users.UserService/List',
+      request,
+      metadata || {},
+      methodDescriptor_UserService_List,
+      callback);
+};
+
+
+/**
+ * @param {!proto.users.UsersParams} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.users.Users>}
+ *     Promise that resolves to the response
+ */
+proto.users.UserServicePromiseClient.prototype.list =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/users.UserService/List',
+      request,
+      metadata || {},
+      methodDescriptor_UserService_List);
+};
+
+
 module.exports = proto.users;
 

@@ -12,6 +12,7 @@ import (
 
 type Dber interface {
 	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
+	QueryxContext(ctx context.Context, query string, args ...interface{}) (*sqlx.Rows, error)
 	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 	QueryRowxContext(ctx context.Context, query string, args ...interface{}) *sqlx.Row
 	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)

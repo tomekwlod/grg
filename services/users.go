@@ -36,3 +36,22 @@ func (us *UserService) Create(ctx context.Context, newUser *pb.NewUser) (*pb.Use
 
 	return &pb.User{Id: user.ID, Email: user.Email}, nil
 }
+
+func (us *UserService) List(ctx context.Context, params *pb.UsersParams) (*pb.Users, error) {
+	users := pb.Users{}
+
+	res, err := userstore.New(us.db).Find(ctx, params.Email)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for _, u := range res {
+		users.User = append(users.User, &pb.User{
+			Id:    u.ID,
+			Email: u.Email,
+		})
+	}
+
+	return &users, nil
+}

@@ -3,16 +3,23 @@ syntax = "proto3";
 package users;
 option go_package="/.;pb";
 
+service UserService {
+  rpc Create(NewUser) returns (User) {};
+  rpc List(UsersParams) returns (Users) {};
+}
+
 message NewUser {
   string email = 1;
   string password = 2;
 }
-
 message User {
   int64 id = 1;
   string email = 2;
 }
 
-service UserService {
-  rpc Create(NewUser) returns (User) {};
+message UsersParams {
+  string email = 1;
+}
+message Users {
+  repeated User user = 1;
 }

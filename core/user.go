@@ -6,7 +6,8 @@ import (
 
 type UserStore interface {
 	Create(context.Context, *User) error
-	Find(ctx context.Context, email string) (*User, error)
+	FindOne(ctx context.Context, email string) (*User, error)
+	Find(ctx context.Context, email string) ([]*User, error)
 }
 
 type User struct {
