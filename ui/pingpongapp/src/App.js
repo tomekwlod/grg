@@ -4,9 +4,9 @@ import { Box, Button, ButtonPrimary, FormTextInput } from "./components";
 // import { PingServiceClient } from "./proto/ping_grpc_web_pb";
 // import { PingRequest } from "./proto/ping_pb";
 import { UserServiceClient } from "./proto/users_grpc_web_pb";
-import { NewUser, UsersParams } from "./proto/users_pb";
+import { UsersParams } from "./proto/users_pb";
 import { AuthServiceClient } from "./proto/auth_grpc_web_pb";
-import { LoginRequest } from "./proto/auth_pb";
+import { LoginRequest, RegisterRequest } from "./proto/auth_pb";
 
 import "./App.css";
 
@@ -29,45 +29,6 @@ function App() {
   const [users, setUsers] = useState([]);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const createUser = () => {
-    var newUser = new NewUser();
-    newUser.setEmail(email);
-    newUser.setPassword(password);
-
-    // use the client to send our pingrequest, the function that is passed
-    // as the third param is a callback.
-    usersClient.create(newUser, null, function (err, response) {
-      if (err !== null) {
-        setMessage(err);
-      }
-      if (response && response != null) {
-        // serialize the response to an object
-        var user = response.toObject();
-        setMessage(`New user created with an Id: ${user.id}`);
-      } else {
-        setMessage(``);
-      }
-      setEmail("");
-      setPassword("");
-    });
-  };
-
-  const getUsers = () => {
-    if (isAuthenticated) {
-      usersClient.list(
-        new UsersParams(),
-        { authorization: "Bearer " + user.token },
-        function (err, resp) {
-          if (err != null) {
-            alert("ERROR WHILE AUTHENTICATING: " + err.message);
-          }
-
-          setUsers(resp.toObject());
-        }
-      );
-    }
-  };
 
   // sendPing is a function that will send a ping to the backend
   // const sendPing = () => {
@@ -119,6 +80,48 @@ function App() {
     setIsAuthenticated(true);
   }, [user]);
 
+  const createUser = () => {
+    var registerRequest = new RegisterRequest();
+    registerRequest.setEmail(email);
+    registerRequest.setPassword(password);
+
+    authClient.register(registerRequest, null, function (err, response) {
+      if (err != null) {
+        setError(err);
+        return;
+      }
+
+      if (response && response != null) {
+        var user = response.toObject();
+        setMessage(
+          `New user created with an ID: ${user.id} and email: ${user.email}`
+        );
+      } else {
+        setMessage(``);
+      }
+
+      setEmail("");
+      setPassword("");
+    });
+  };
+
+  const getUsers = () => {
+    if (isAuthenticated) {
+      usersClient.list(
+        new UsersParams(),
+        { authorization: "Bearer " + user.token },
+        function (err, resp) {
+          if (err != null) {
+            setError(err);
+            return;
+          }
+
+          setUsers(resp.toObject());
+        }
+      );
+    }
+  };
+
   const onSubmit = () => {
     var loginRequest = new LoginRequest();
     loginRequest.setEmail(email);
@@ -156,14 +159,13 @@ function App() {
           {status + ""}
         </span>
       </p> */}
-      {/* {message && (<p><b>{message}</b></p>)} */}
+      {message && (
+        <p>
+          <b>{message}</b>
+        </p>
+      )}
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
+      <form>
         <Box
           display="flex"
           flexWrap="wrap"
@@ -189,6 +191,10 @@ function App() {
               mx="auto"
               px="3rem"
               mt="3rem"
+              onClick={(e) => {
+                e.preventDefault();
+                onSubmit();
+              }}
             >
               Login
             </ButtonPrimary>
@@ -198,13 +204,19 @@ function App() {
               mx="auto"
               px="3rem"
               mt="3rem"
-              onClick={(e) => createUser()}
+              onClick={(e) => {
+                e.preventDefault();
+                createUser();
+              }}
             >
               Register
             </ButtonPrimary>
           </Box>
         </Box>
       </form>
+
+      <div className="errors">{error.message}</div>
+
       {isAuthenticated && (
         <ButtonPrimary
           bg="grey"
@@ -229,7 +241,6 @@ function App() {
           );
         })}
       </div>
-      <div className="errors">{error.message}</div>
     </div>
   );
 }

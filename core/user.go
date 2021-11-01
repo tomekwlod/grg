@@ -23,3 +23,16 @@ func (u *User) ValidatePassword(password string) bool {
 	}
 	return true
 }
+
+func (u *User) Validate() []string {
+	var e []string
+
+	if u.Email == "" {
+		e = append(e, "Email cannot be empty")
+	}
+	if u.Password == "" {
+		e = append(e, "Password cannot be empty")
+	}
+
+	return e
+}

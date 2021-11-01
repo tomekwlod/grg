@@ -38,9 +38,9 @@ func main() {
 
 	log.Println(pong)
 
-	users := pb.NewUserServiceClient(conn)
+	users := pb.NewAuthServiceClient(conn)
 
-	user, err := users.Create(ctx, &pb.NewUser{Email: "test", Password: "pass"})
+	user, err := users.Register(ctx, &pb.RegisterRequest{Email: "test@email.com", Password: "password"})
 
 	if err != nil {
 		log.Fatal(err)

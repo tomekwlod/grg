@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tomekwlod/grg/auth"
@@ -63,4 +64,34 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	}
 
 	return &pb.LoginResponse{Token: token}, nil
+}
+
+func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
+
+	user := core.User{
+		Email:    req.GetEmail(),
+		Password: req.GetPassword(),
+	}
+
+	errs := user.Validate()
+
+	if len(errs) > 0 {
+		return nil, status.Errorf(codes.Internal, "validation error: %s", strings.Join(errs, "; "))
+	}
+
+	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
+		return userstore.New(tx).Create(ctx, &user)
+	})
+
+	if err != nil {
+		log.Printf("%+v", err)
+
+		errorMessage := "unknown error occured"
+		if strings.Contains(err.Error(), "unique constraint") {
+			errorMessage = "user already exists"
+		}
+		return nil, status.Errorf(codes.Internal, "couldn't create a new user, %s", errorMessage)
+	}
+
+	return &pb.RegisterResponse{Id: user.ID, Email: user.Email}, nil
 }

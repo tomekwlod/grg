@@ -73,67 +73,6 @@ proto.users.UserServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.users.NewUser,
- *   !proto.users.User>}
- */
-const methodDescriptor_UserService_Create = new grpc.web.MethodDescriptor(
-  '/users.UserService/Create',
-  grpc.web.MethodType.UNARY,
-  proto.users.NewUser,
-  proto.users.User,
-  /**
-   * @param {!proto.users.NewUser} request
-   * @return {!Uint8Array}
-   */
-  function(request) {
-    return request.serializeBinary();
-  },
-  proto.users.User.deserializeBinary
-);
-
-
-/**
- * @param {!proto.users.NewUser} request The
- *     request proto
- * @param {?Object<string, string>} metadata User defined
- *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.users.User)}
- *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.users.User>|undefined}
- *     The XHR Node Readable Stream
- */
-proto.users.UserServiceClient.prototype.create =
-    function(request, metadata, callback) {
-  return this.client_.rpcCall(this.hostname_ +
-      '/users.UserService/Create',
-      request,
-      metadata || {},
-      methodDescriptor_UserService_Create,
-      callback);
-};
-
-
-/**
- * @param {!proto.users.NewUser} request The
- *     request proto
- * @param {?Object<string, string>=} metadata User defined
- *     call metadata
- * @return {!Promise<!proto.users.User>}
- *     Promise that resolves to the response
- */
-proto.users.UserServicePromiseClient.prototype.create =
-    function(request, metadata) {
-  return this.client_.unaryCall(this.hostname_ +
-      '/users.UserService/Create',
-      request,
-      metadata || {},
-      methodDescriptor_UserService_Create);
-};
-
-
-/**
- * @const
- * @type {!grpc.web.MethodDescriptor<
  *   !proto.users.UsersParams,
  *   !proto.users.Users>}
  */

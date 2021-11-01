@@ -1,5 +1,5 @@
 /**
- * @fileoverview gRPC-Web generated client stub for main
+ * @fileoverview gRPC-Web generated client stub for auth
  * @enhanceable
  * @public
  */
@@ -16,7 +16,7 @@ const grpc = {};
 grpc.web = require('grpc-web');
 
 const proto = {};
-proto.main = require('./auth_pb.js');
+proto.auth = require('./auth_pb.js');
 
 /**
  * @param {string} hostname
@@ -26,7 +26,7 @@ proto.main = require('./auth_pb.js');
  * @struct
  * @final
  */
-proto.main.AuthServiceClient =
+proto.auth.AuthServiceClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -52,7 +52,7 @@ proto.main.AuthServiceClient =
  * @struct
  * @final
  */
-proto.main.AuthServicePromiseClient =
+proto.auth.AuthServicePromiseClient =
     function(hostname, credentials, options) {
   if (!options) options = {};
   options.format = 'text';
@@ -73,39 +73,39 @@ proto.main.AuthServicePromiseClient =
 /**
  * @const
  * @type {!grpc.web.MethodDescriptor<
- *   !proto.main.LoginRequest,
- *   !proto.main.LoginResponse>}
+ *   !proto.auth.LoginRequest,
+ *   !proto.auth.LoginResponse>}
  */
 const methodDescriptor_AuthService_Login = new grpc.web.MethodDescriptor(
-  '/main.AuthService/Login',
+  '/auth.AuthService/Login',
   grpc.web.MethodType.UNARY,
-  proto.main.LoginRequest,
-  proto.main.LoginResponse,
+  proto.auth.LoginRequest,
+  proto.auth.LoginResponse,
   /**
-   * @param {!proto.main.LoginRequest} request
+   * @param {!proto.auth.LoginRequest} request
    * @return {!Uint8Array}
    */
   function(request) {
     return request.serializeBinary();
   },
-  proto.main.LoginResponse.deserializeBinary
+  proto.auth.LoginResponse.deserializeBinary
 );
 
 
 /**
- * @param {!proto.main.LoginRequest} request The
+ * @param {!proto.auth.LoginRequest} request The
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.main.LoginResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.auth.LoginResponse)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.main.LoginResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.auth.LoginResponse>|undefined}
  *     The XHR Node Readable Stream
  */
-proto.main.AuthServiceClient.prototype.login =
+proto.auth.AuthServiceClient.prototype.login =
     function(request, metadata, callback) {
   return this.client_.rpcCall(this.hostname_ +
-      '/main.AuthService/Login',
+      '/auth.AuthService/Login',
       request,
       metadata || {},
       methodDescriptor_AuthService_Login,
@@ -114,22 +114,83 @@ proto.main.AuthServiceClient.prototype.login =
 
 
 /**
- * @param {!proto.main.LoginRequest} request The
+ * @param {!proto.auth.LoginRequest} request The
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.main.LoginResponse>}
+ * @return {!Promise<!proto.auth.LoginResponse>}
  *     Promise that resolves to the response
  */
-proto.main.AuthServicePromiseClient.prototype.login =
+proto.auth.AuthServicePromiseClient.prototype.login =
     function(request, metadata) {
   return this.client_.unaryCall(this.hostname_ +
-      '/main.AuthService/Login',
+      '/auth.AuthService/Login',
       request,
       metadata || {},
       methodDescriptor_AuthService_Login);
 };
 
 
-module.exports = proto.main;
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.auth.RegisterRequest,
+ *   !proto.auth.RegisterResponse>}
+ */
+const methodDescriptor_AuthService_Register = new grpc.web.MethodDescriptor(
+  '/auth.AuthService/Register',
+  grpc.web.MethodType.UNARY,
+  proto.auth.RegisterRequest,
+  proto.auth.RegisterResponse,
+  /**
+   * @param {!proto.auth.RegisterRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.auth.RegisterResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.auth.RegisterRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.auth.RegisterResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.auth.RegisterResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.auth.AuthServiceClient.prototype.register =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/auth.AuthService/Register',
+      request,
+      metadata || {},
+      methodDescriptor_AuthService_Register,
+      callback);
+};
+
+
+/**
+ * @param {!proto.auth.RegisterRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.auth.RegisterResponse>}
+ *     Promise that resolves to the response
+ */
+proto.auth.AuthServicePromiseClient.prototype.register =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/auth.AuthService/Register',
+      request,
+      metadata || {},
+      methodDescriptor_AuthService_Register);
+};
+
+
+module.exports = proto.auth;
 

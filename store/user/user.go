@@ -17,7 +17,7 @@ type userStore struct {
 }
 
 func (u *userStore) Create(ctx context.Context, user *core.User) error {
-	return u.db.QueryRowContext(ctx, "INSERT INTO users (password, email) VALUES ($1,$2) RETURNING id", user.Password, user.Email).Scan(&user.ID)
+	return u.db.QueryRowContext(ctx, "INSERT INTO users (password, email, enabled) VALUES ($1,$2,false) RETURNING id", user.Password, user.Email).Scan(&user.ID)
 }
 
 func (u *userStore) FindOne(ctx context.Context, email string) (*core.User, error) {
