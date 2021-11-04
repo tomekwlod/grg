@@ -37,3 +37,9 @@ run:
 fbrun: frontbuild run
 frun: 
 	(cd ui/pingpongapp/ && yarn start)
+
+gotest:
+	go test ./...
+gocov:
+	go test ./... -coverprofile coverage.out
+	go tool cover -html=coverage.out -o coverage.html

@@ -43,9 +43,9 @@ func main() {
 	dbURL := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		env.Env("POSTGRES_HOST", "localhost"),
 		env.Env("POSTGRES_PORT", "5432"),
-		env.Env("POSTGRES_USER", "pingpong"),
+		env.Env("POSTGRES_USER", "grg"),
 		env.Env("POSTGRES_PASSWORD", ""),
-		env.Env("POSTGRES_DB", "pingpong"),
+		env.Env("POSTGRES_DB", "grg"),
 		env.Env("POSTGRES_SSLMODE", "disable"))
 
 	dbConn, err = db.PostgresConnection(dbURL)
