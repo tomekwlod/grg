@@ -2,6 +2,9 @@ package core
 
 import (
 	"context"
+	"log"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserStore interface {
@@ -17,22 +20,25 @@ type User struct {
 }
 
 func (u *User) ValidatePassword(password string) bool {
-	// err := bcrypt.CompareHashAndPassword([]byte(u.HashedPassword), []byte(password))
-	if password != u.Password {
+
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+
+	if err != nil {
+		log.Println("Problem when comparing passwords", err)
 		return false
 	}
+
 	return true
 }
 
-func (u *User) Validate() []string {
-	var e []string
+func (u *User) HashPassword(password string) (string, error) {
+	// Salt and hash the password using the bcrypt algorithm
+	// The second argument is the cost of hashing, which we arbitrarily set as 8 (this value can be more or less, depending on the computing power you wish to utilize)
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), 8)
 
-	if u.Email == "" {
-		e = append(e, "Email cannot be empty")
-	}
-	if u.Password == "" {
-		e = append(e, "Password cannot be empty")
+	if err != nil {
+		return "", err
 	}
 
-	return e
+	return string(hash), nil
 }

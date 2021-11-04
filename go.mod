@@ -13,6 +13,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/rs/cors v1.8.0 // indirect
 	github.com/tomekwlod/utils v0.0.0-20210516215220-b2b82d6194fc
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect
 	golang.org/x/sys v0.0.0-20211015200801-69063c4bb744 // indirect
 	google.golang.org/genproto v0.0.0-20211016002631-37fc39342514 // indirect

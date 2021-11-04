@@ -23,7 +23,7 @@ func (u *userStore) Create(ctx context.Context, user *core.User) error {
 func (u *userStore) FindOne(ctx context.Context, email string) (*core.User, error) {
 	user := new(core.User)
 
-	err := u.db.QueryRowxContext(ctx, "SELECT id,email,password FROM users WHERE email=$1 LIMIT 1", email).StructScan(user)
+	err := u.db.QueryRowxContext(ctx, "SELECT id, email, password FROM users WHERE email=$1 LIMIT 1", email).StructScan(user)
 
 	if err != nil {
 		return nil, err

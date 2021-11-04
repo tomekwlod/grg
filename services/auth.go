@@ -33,25 +33,54 @@ func (as *AuthService) AuthFuncOverride(ctx context.Context, fullMethodName stri
 	return ctx, nil
 }
 
+type loginRequest struct {
+	email    string
+	password string
+}
+
+func (l *loginRequest) Validate() []string {
+	var e []string
+
+	if l.email == "" {
+		e = append(e, "Email cannot be empty")
+	}
+	if l.password == "" {
+		e = append(e, "Password cannot be empty")
+	}
+
+	return e
+}
+
 func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+
+	lr := loginRequest{
+		email:    req.GetEmail(),
+		password: req.GetPassword(),
+	}
+
+	errs := lr.Validate()
+
+	if len(errs) > 0 {
+		return nil, status.Errorf(codes.Internal, "validation error: %s", strings.Join(errs, "; "))
+	}
+
 	var user *core.User
 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
 		user, err = userstore.New(tx).FindOne(ctx, req.GetEmail())
 
 		if err != nil {
-			return fmt.Errorf("cannot find user: %v", err)
+			return err
 		}
 
 		return err
 	})
 
 	if err != nil {
-		log.Printf("%v", err)
+		log.Printf("not existing user `%s`: %v", req.GetEmail(), err)
 		return nil, status.Errorf(codes.Unauthenticated, "not existing user")
 	}
 
-	// plain password for now!!!!
 	if !user.ValidatePassword(req.GetPassword()) {
 		return nil, status.Errorf(codes.Unauthenticated, "incorrect username or password")
 	}
@@ -68,18 +97,29 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 
 func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 
-	user := core.User{
-		Email:    req.GetEmail(),
-		Password: req.GetPassword(),
+	lr := loginRequest{
+		email:    req.GetEmail(),
+		password: req.GetPassword(),
 	}
 
-	errs := user.Validate()
+	errs := lr.Validate()
 
 	if len(errs) > 0 {
 		return nil, status.Errorf(codes.Internal, "validation error: %s", strings.Join(errs, "; "))
 	}
 
-	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
+	var user core.User
+	user.Email = req.GetEmail()
+
+	hashedPassword, err := user.HashPassword(req.GetPassword())
+
+	if err != nil {
+		return nil, fmt.Errorf("problem with hashing a password, %v", err)
+	}
+
+	user.Password = hashedPassword
+
+	err = as.db.Transact(func(tx *sqlx.Tx) (err error) {
 		return userstore.New(tx).Create(ctx, &user)
 	})
 
