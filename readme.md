@@ -23,9 +23,9 @@ run:
 
 create database first:
 ```
-CREATE USER pingpong WITH ENCRYPTED PASSWORD 'password-here';
-CREATE DATABASE pingpong OWNER pingpong;
-GRANT ALL PRIVILEGES ON DATABASE pingpong TO pingpong;
+CREATE USER grg WITH ENCRYPTED PASSWORD 'password-here';
+CREATE DATABASE grg OWNER grg;
+GRANT ALL PRIVILEGES ON DATABASE grg TO grg;
 ```
 
 

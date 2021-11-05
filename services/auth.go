@@ -85,7 +85,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Errorf(codes.Unauthenticated, "incorrect username or password")
 	}
 
-	token, err := auth.GenerateToken(user.Email, "simple_user", as.auth.SecretSigningKey) // user.Role
+	token, err := auth.GenerateToken(user.ID, user.Email, "simple_user", as.auth.SecretSigningKey) // user.Role
 
 	if err != nil {
 		log.Printf("%v", err)

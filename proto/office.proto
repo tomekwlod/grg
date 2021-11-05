@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package office;
+option go_package="/.;pb";
+
+message CreateOfficeRequest {
+  string name = 1;
+  string adminId = 2;
+  int64  maxPeoplePerDay = 3;
+}
+message CreateOfficeResponse {
+  int64  id = 1;
+  int64  adminId = 2;
+  string name = 3;
+}
+
+service OfficeService {
+  rpc Create(CreateOfficeRequest) returns (CreateOfficeResponse) {};
+}

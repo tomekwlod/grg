@@ -15,14 +15,17 @@ import (
 type (
 	authenticated     bool
 	usernameFromClaim string
+	uidFromClaim      int64
 )
 
 const (
 	Authenticated     authenticated     = false
 	UsernameFromClaim usernameFromClaim = ""
+	UIDFromClaim      uidFromClaim      = 0
 )
 
 type Claims struct {
+	UID      int64  `json:"uid"`
 	Username string `json:"username"`
 	Role     string `json:"role"`
 	jwt.StandardClaims
@@ -43,7 +46,7 @@ func (a *Auth) AuthFunc(ctx context.Context) (context.Context, error) {
 		return nil, err
 	}
 
-	username, err := validateToken(token, a.SecretSigningKey)
+	claims, err := validateToken(token, a.SecretSigningKey)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "invalid auth token: %v", err)
@@ -51,7 +54,8 @@ func (a *Auth) AuthFunc(ctx context.Context) (context.Context, error) {
 
 	// set meta data in context for possible later validation
 	newCtx := context.WithValue(ctx, Authenticated, true)
-	newCtx = context.WithValue(newCtx, UsernameFromClaim, username)
+	newCtx = context.WithValue(newCtx, UsernameFromClaim, claims.Username)
+	newCtx = context.WithValue(newCtx, UIDFromClaim, claims.UID)
 
 	return newCtx, nil
 }
@@ -78,14 +82,13 @@ func validateToken(tokenString string, secretSigningKey []byte) (*Claims, error)
 	return nil, fmt.Errorf("could not validate")
 }
 
-/// to check and use!
-///
-///
-///
-///
-func GenerateToken(username, role string, signingSecret []byte) (string, error) {
+// todo:
+// - token expiration!!
+// - role is fake
+func GenerateToken(uid int64, username, role string, signingSecret []byte) (string, error) {
 	// Create the Claims
 	claims := Claims{
+		uid,
 		username,
 		role,
 		jwt.StandardClaims{
