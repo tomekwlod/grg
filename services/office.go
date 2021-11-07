@@ -62,7 +62,7 @@ func (as *OfficeService) Create(ctx context.Context, req *pb.CreateOfficeRequest
 		errorMessage := "unknown error occured"
 
 		if strings.Contains(err.Error(), "unique constraint") {
-			errorMessage = "user already exists"
+			errorMessage = "office already exists"
 		}
 
 		return nil, status.Errorf(codes.Internal, "couldn't create a new office, %s", errorMessage)

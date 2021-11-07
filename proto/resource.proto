@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resource;
+option go_package="/.;pb";
+
+message CreateResourceRequest {
+  string name = 1;
+  int64 officeId = 2;
+}
+message CreateResourceResponse {
+  int64  id = 1;
+  int64  officeId = 2;
+  string name = 3;
+}
+
+service ResourceService {
+  rpc Create(CreateResourceRequest) returns (CreateResourceResponse) {};
+}

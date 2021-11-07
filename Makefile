@@ -7,6 +7,7 @@ protogen:
 		&& protoc users.proto   --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
 		&& protoc auth.proto    --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
 		&& protoc office.proto  --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
+		&& protoc resource.proto  --js_out=import_style=commonjs,binary:./../ui/pingpongapp/src/proto/ --grpc-web_out=import_style=commonjs,mode=grpcwebtext:./../ui/pingpongapp/src/proto/ --go-grpc_out=./../pb/ --go_out=./../pb/ \
 	)
 
 frontinit:
