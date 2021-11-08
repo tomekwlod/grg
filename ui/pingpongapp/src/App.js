@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Box, Button, ButtonPrimary, FormTextInput } from "./components";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Box,
+  Button,
+  ButtonPrimary,
+  FormTextInput,
+  CreateOffice,
+} from "./components";
 
 // import { PingServiceClient } from "./proto/ping_grpc_web_pb";
 // import { PingRequest } from "./proto/ping_pb";
@@ -7,6 +13,15 @@ import { UserServiceClient } from "./proto/users_grpc_web_pb";
 import { UsersParams } from "./proto/users_pb";
 import { AuthServiceClient } from "./proto/auth_grpc_web_pb";
 import { LoginRequest, RegisterRequest } from "./proto/auth_pb";
+
+import {
+  GlobalProvider,
+  GlobalContext,
+  user,
+  setUser,
+  isAuthenticated,
+  setIsAuthenticated,
+} from "./context/GlobalState";
 
 import "./App.css";
 
@@ -16,19 +31,21 @@ var usersClient = new UserServiceClient("https://localhost:8080");
 var authClient = new AuthServiceClient("https://localhost:8080");
 
 function App() {
+  useContext(GlobalContext);
+
   const [error, setError] = useState({});
   const [message, setMessage] = useState("");
 
   // Create a const named status and a function called setStatus
-  const [status, setStatus] = useState(false);
+  // const [status, setStatus] = useState(false);
 
   const [email, setEmail] = useState("email@domain.com");
   const [password, setPassword] = useState("password");
 
-  const [user, setUser] = useState({});
+  // const [user, setUser] = useState({});
   const [users, setUsers] = useState([]);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // sendPing is a function that will send a ping to the backend
   // const sendPing = () => {
@@ -147,9 +164,14 @@ function App() {
   };
 
   return (
-    <div className="App">
-      {user.token ? <Box>You're signed in!</Box> : "You're not signed in."}
-      {/* <p>
+    <GlobalProvider>
+      <div className="App">
+        {isAuthenticated ? (
+          <Box>You're signed in!</Box>
+        ) : (
+          "You're not signed in."
+        )}
+        {/* <p>
         Status:{" "}
         <span
           style={
@@ -159,89 +181,92 @@ function App() {
           {status + ""}
         </span>
       </p> */}
-      {message && (
-        <p>
-          <b>{message}</b>
-        </p>
-      )}
+        {message && (
+          <p>
+            <b>{message}</b>
+          </p>
+        )}
 
-      <form>
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          alignContent="space-around"
-          flexDirection="column"
-        >
-          <FormTextInput
-            label="Email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <FormTextInput
-            label="Password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Box display="flex" flexWrap="nowrap" alignContent="space-around">
-            <ButtonPrimary
-              bg="blue"
-              display="flex"
-              mx="auto"
-              px="3rem"
-              mt="3rem"
-              onClick={(e) => {
-                e.preventDefault();
-                onSubmit();
-              }}
-            >
-              Login
-            </ButtonPrimary>
-            <ButtonPrimary
-              bg="grey"
-              display="flex"
-              mx="auto"
-              px="3rem"
-              mt="3rem"
-              onClick={(e) => {
-                e.preventDefault();
-                createUser();
-              }}
-            >
-              Register
-            </ButtonPrimary>
+        <form>
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            alignContent="space-around"
+            flexDirection="column"
+          >
+            <FormTextInput
+              label="Email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <FormTextInput
+              label="Password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Box display="flex" flexWrap="nowrap" alignContent="space-around">
+              <ButtonPrimary
+                bg="blue"
+                display="flex"
+                mx="auto"
+                px="3rem"
+                mt="3rem"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onSubmit();
+                }}
+              >
+                Login
+              </ButtonPrimary>
+              <ButtonPrimary
+                bg="grey"
+                display="flex"
+                mx="auto"
+                px="3rem"
+                mt="3rem"
+                onClick={(e) => {
+                  e.preventDefault();
+                  createUser();
+                }}
+              >
+                Register
+              </ButtonPrimary>
+            </Box>
           </Box>
-        </Box>
-      </form>
+        </form>
 
-      <div className="errors">{error.message}</div>
+        <div className="errors">{error.message}</div>
 
-      {isAuthenticated && (
-        <ButtonPrimary
-          bg="grey"
-          display="flex"
-          mx="auto"
-          px="3rem"
-          mt="3rem"
-          onClick={(e) => {
-            getUsers();
-          }}
-        >
-          Get users
-        </ButtonPrimary>
-      )}
+        {isAuthenticated && (
+          <ButtonPrimary
+            bg="grey"
+            display="flex"
+            mx="auto"
+            px="3rem"
+            mt="3rem"
+            onClick={(e) => {
+              getUsers();
+            }}
+          >
+            Get users
+          </ButtonPrimary>
+        )}
 
-      <div>
-        {(users.userList || []).map((u) => {
-          return (
-            <div>
-              {u.id} {u.email}
-            </div>
-          );
-        })}
+        <div>
+          {(users.userList || []).map((u) => {
+            return (
+              <div>
+                {u.id} {u.email}
+              </div>
+            );
+          })}
+        </div>
+
+        {isAuthenticated && <CreateOffice />}
       </div>
-    </div>
+    </GlobalProvider>
   );
 }
 

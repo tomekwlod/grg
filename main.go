@@ -81,6 +81,8 @@ func main() {
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
 	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath))
+	pb.RegisterOfficeServiceServer(apiServer, services.NewOfficeService(dbConn))
+	pb.RegisterResourceServiceServer(apiServer, services.NewResourceService(dbConn))
 	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
 	// Start serving in a goroutine to not block
