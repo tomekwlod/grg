@@ -17,7 +17,7 @@ In case of error like: `“protoc-gen-grpc-web” cannot be opened because the d
 
 run: 
 - make pgen
-- (cd ui/pingpongapp && yarn && yarn build)
+- (cd ui/bookingapp && yarn && yarn build)
 - open localhost:8080
 - in case of error like: `service_grpc_web_pb.js:101 Uncaught TypeError: Cannot read properties of undefined (reading 'MethodInfo')` follow this: `https://stackoverflow.com/a/69582682/1800372` (basically you need to be sure you're usign the version 1.3.0 or above of `protoc-gen-grpc-web`)
 
