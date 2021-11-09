@@ -46,6 +46,10 @@ func (a *Auth) AuthFunc(ctx context.Context) (context.Context, error) {
 		return nil, err
 	}
 
+	// // getting cookies and other headers!
+	// md, _ := metadata.FromIncomingContext(ctx)
+	// fmt.Println(md["cookie"])
+
 	claims, err := validateToken(token, a.SecretSigningKey)
 
 	if err != nil {
@@ -92,7 +96,8 @@ func GenerateToken(uid int64, username, role string, signingSecret []byte) (stri
 		username,
 		role,
 		jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * time.Duration(1)).Unix(),
+			// ExpiresAt: time.Now().Add(time.Hour * time.Duration(1)).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * time.Duration(1)).Unix(),
 			Issuer:    "AuthFunc",
 		},
 	}

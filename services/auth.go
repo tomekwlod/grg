@@ -69,10 +69,6 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
 		user, err = userstore.New(tx).FindOne(ctx, req.GetEmail())
 
-		if err != nil {
-			return err
-		}
-
 		return err
 	})
 
@@ -91,6 +87,9 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		log.Printf("%v", err)
 		return nil, status.Errorf(codes.Internal, "couldn't generate new token for user %s", user.Email)
 	}
+
+	// md := metadata.New(map[string]string{"Set-Cookie": fmt.Sprintf("jwt=%s; Path=/; HttpOnly", token)})
+	// grpc.SendHeader(ctx, md)
 
 	return &pb.LoginResponse{Token: token}, nil
 }
