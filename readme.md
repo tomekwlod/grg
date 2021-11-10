@@ -53,6 +53,7 @@ GRANT ALL PRIVILEGES ON DATABASE grg TO grg;
 ### GRPC Articles
 - https://itnext.io/using-grpc-with-tls-golang-and-react-no-envoy-92e898bf8463 - WEB+GRPC+REACT no envoy
 - https://medium.com/swlh/building-a-realtime-dashboard-with-reactjs-go-grpc-and-envoy-7be155dfabfb - WEB with envoy, but nice STREAM example
+- https://itnext.io/streaming-data-with-grpc-2eb983fdee11 - another stream example
 
 
 ## General info

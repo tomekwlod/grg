@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package monitor;
+option go_package="/.;pb";
+
+// MonitorResponse is a struct containing information about the system's Memory and CPU usage
+message MonitorResponse {
+    int32 cpu = 1;
+    int32 memory_free = 2;
+    int32 memory_used = 3;
+}
+
+message MonitorRequest {
+    int32 miliseconds = 1;
+}
+
+service MonitorService {
+    rpc Monitor(MonitorRequest) returns (stream MonitorResponse) {};
+}

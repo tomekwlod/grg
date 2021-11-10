@@ -83,6 +83,7 @@ func main() {
 	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath))
 	pb.RegisterOfficeServiceServer(apiServer, services.NewOfficeService(dbConn))
 	pb.RegisterResourceServiceServer(apiServer, services.NewResourceService(dbConn))
+	pb.RegisterMonitorServiceServer(apiServer, new(services.MonitorService)) // if there is no costructor
 	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
 	// Start serving in a goroutine to not block
@@ -112,10 +113,11 @@ func main() {
 
 	// Create a HTTP server and bind the router to it, and set wanted address
 	srv := &http.Server{
-		Handler:      r,
-		Addr:         "localhost:8080",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		Handler: r,
+		Addr:    "localhost:8080",
+		// the timeouts are disabled because they close the grpc stream
+		// WriteTimeout: 15 * time.Second,
+		// ReadTimeout: 15 * time.Second,
 	}
 
 	// Serve the webapp over TLS
@@ -134,6 +136,9 @@ func GenerateTLSApi(pemPath, keyPath string, ath grpcauth.AuthFunc) (*grpc.Serve
 		grpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(
 			grpcauth.UnaryServerInterceptor(ath),
 		)),
+		// grpc.StreamInterceptor(grpcMiddleware.ChainStreamServer(
+		// 	grpcauth.StreamServerInterceptor(ath),
+		// )),
 	)
 
 	return s, nil
