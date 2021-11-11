@@ -46,3 +46,9 @@ gotest:
 gocov:
 	go test ./... -coverprofile coverage.out
 	go tool cover -html=coverage.out -o coverage.html
+
+.PHONY: \
+	cert \
+	protogen \
+	setup \
+	run

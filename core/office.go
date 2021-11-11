@@ -6,6 +6,7 @@ import (
 
 type OfficeStore interface {
 	Create(context.Context, *Office) error
+	FindOne(context.Context, string) (*Office, error)
 }
 
 type Office struct {

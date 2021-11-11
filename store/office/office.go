@@ -24,3 +24,15 @@ func (o *officeStore) Create(ctx context.Context, office *core.Office) error {
 		office.Name, office.Description, office.MaxPeoplePerDay, office.Address, office.Telephone, office.AdminID).
 		Scan(&office.ID)
 }
+
+func (u *officeStore) FindOne(ctx context.Context, name string) (*core.Office, error) {
+	office := new(core.Office)
+
+	err := u.db.QueryRowxContext(ctx, "SELECT id, admin_id, name, description, address, telephone, max_people_pd FROM office WHERE name=$1 LIMIT 1", name).StructScan(office)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return office, nil
+}

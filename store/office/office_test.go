@@ -1,4 +1,4 @@
-package user
+package office
 
 import (
 	"context"
@@ -10,16 +10,17 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/jackc/pgx/stdlib"
+	"github.com/jmoiron/sqlx"
 	"github.com/joho/godotenv"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/db"
+	us "github.com/tomekwlod/grg/store/user"
 	"github.com/tomekwlod/utils/env"
 )
 
 var noContext = context.TODO()
 
-func TestUser(t *testing.T) {
-
+func TestOffice(t *testing.T) {
 	err := godotenv.Load("../../.env.test")
 
 	if err != nil {
@@ -51,69 +52,59 @@ func TestUser(t *testing.T) {
 
 	defer dbConn.Close()
 
-	store := New(dbConn).(*userStore)
+	newOffice := core.Office{
+		Name:            "Office 1",
+		Description:     "Office 1 located in London",
+		Address:         "1 Oxford Sreet",
+		Telephone:       "0 788 993 03 98 67",
+		MaxPeoplePerDay: 10,
+	}
 
 	t.Run("CREATE", func(t *testing.T) {
-		users := []core.User{
-			{
-				Email:    "test1@email.com",
-				Password: "password",
-			},
-			{
-				Email:    "test2@email.com",
-				Password: "password",
-			},
+		user := core.User{
+			Email:    "admin@email.com",
+			Password: "password",
 		}
 
-		for _, u := range users {
-			err := store.Create(noContext, &u)
+		err := dbConn.Transact(func(tx *sqlx.Tx) error {
+			officeStore := New(tx).(*officeStore)
+			usersStore := us.New(tx)
 
-			if err != nil {
-				t.Error(err)
+			if err := usersStore.Create(noContext, &user); err != nil {
+				return err
 			}
-		}
-	})
-	t.Run("FIND ONE", func(t *testing.T) {
 
-		wantPassword := "password"
+			newOffice.AdminID = user.ID
 
-		user, err := store.FindOne(noContext, "test2@email.com")
+			if err := officeStore.Create(noContext, &newOffice); err != nil {
+				return err
+			}
+
+			if newOffice.ID <= 0 {
+				return fmt.Errorf("Want newly created officeID to be greater than 0, got `%d`", newOffice.ID)
+			}
+
+			return nil
+		})
 
 		if err != nil {
 			t.Error(err)
 		}
-
-		if user.Password != wantPassword {
-			t.Errorf("Want user's password to be `%s`, got `%s`", wantPassword, user.Password)
-		}
-	})
-	t.Run("FIND WRONG ONE", func(t *testing.T) {
-
-		user, err := store.FindOne(noContext, "not-existing@email.com")
-
-		if err == nil {
-			t.Errorf("Expected an error: `sql: no rows in result set`, got user: %v", user)
-		}
-
-		// if user.Password != wantPassword {
-		// 	t.Errorf("Want user's password to be `%s`, got `%s`", wantPassword, user.Password)
-		// }
 	})
 	t.Run("FIND", func(t *testing.T) {
+		officeStore := New(dbConn).(*officeStore)
 
-		wantCount := 2
-
-		users, err := store.Find(noContext, "")
+		office, err := officeStore.FindOne(noContext, newOffice.Name)
 
 		if err != nil {
-			t.Error(err)
+			t.Errorf("Expected to find one office by its name: `%s`, but got en error instead: %+v", newOffice.Name, err)
 		}
 
-		if len(users) != wantCount {
-			t.Errorf("Want users amount to be `%d`, got `%d`", wantCount, len(users))
+		if newOffice.Name != office.Name {
+			t.Errorf("Expected an office name to be: `%s`, but got `%s`", newOffice.Name, office.Name)
 		}
+
 	})
-
 }
 
 func prepare() (func(), error) {
