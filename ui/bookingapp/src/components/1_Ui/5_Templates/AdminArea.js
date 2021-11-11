@@ -20,31 +20,16 @@ export const AdminArea = (props) => {
   return (
     <>
       {token && (
-        <Box>
-          <span>Nav</span>
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+          }}
+        >
           <CreateOffice />
           <Monitor />
-          {/* <ButtonPrimary
-            bg="grey"
-            display="flex"
-            mx="auto"
-            px="3rem"
-            mt="3rem"
-            onClick={(e) => {
-              // getUsers();
-            }}
-          >
-            Get users
-          </ButtonPrimary>
-          <div>
-            {(users.userList || []).map((u) => {
-              return (
-                <div>
-                  {u.id} {u.email}
-                </div>
-              );
-            })}
-          </div> */}
         </Box>
       )}
     </>

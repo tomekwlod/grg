@@ -1,35 +1,14 @@
-import React, { useState, useEffect, useContext } from "react";
-import {
-  Box,
-  Button,
-  ButtonPrimary,
-  FormTextInput,
-  CreateOffice,
-  LoginForm,
-  AdminArea,
-} from "./components";
+import React from "react";
+import { LoginForm, AdminArea } from "./components";
 
-// import { PingServiceClient } from "./proto/ping_grpc_web_pb";
-// import { PingRequest } from "./proto/ping_pb";
-// import { UserServiceClient } from "./proto/users_grpc_web_pb";
-// import { UsersParams } from "./proto/users_pb";
-
-import {
-  GlobalProvider,
-  GlobalContext,
-  // user,
-  state,
-} from "./context/GlobalState";
+import { GlobalProvider } from "./context/GlobalState";
 
 import "./App.css";
 
 // We create a client that connects to the api
-// var pingClient = new PingServiceClient("https://localhost:8080");
 // var usersClient = new UserServiceClient("https://localhost:8080");
 
 function App() {
-  useContext(GlobalContext);
-
   // const [error, setError] = useState({});
 
   // Create a const named status and a function called setStatus
@@ -91,7 +70,19 @@ function App() {
 
   return (
     <GlobalProvider>
-      <div className="App">
+      <div
+        className="App"
+        style={{
+          width: "1120px",
+          display: "flex",
+          flexDirection: "column",
+          flexWrap: "nowrap",
+          alignItems: "stretch",
+          alignContent: "space-around",
+          margin: "auto",
+        }}
+      >
+        <h1>An example app</h1>
         <LoginForm />
         <AdminArea />
       </div>

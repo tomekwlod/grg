@@ -70,59 +70,71 @@ export const LoginForm = (props) => {
   return (
     <>
       {!token && (
-        <Box border="1px solid grey" width="300px">
+        <Box
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignContent: "space-around",
+            alignItems: "center",
+          }}
+        >
           <span>Login / Register</span>
-          <form>
-            <Box
-              display="flex"
-              flexWrap="wrap"
-              alignContent="space-around"
-              flexDirection="column"
-            >
-              <FormTextInput
-                label="Email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <FormTextInput
-                label="Password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Box display="flex" flexWrap="nowrap" alignContent="space-around">
-                <ButtonPrimary
-                  bg="blue"
+          <Box style={{ width: "400px" }}>
+            <form>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                alignContent="stretch"
+                flexDirection="column"
+              >
+                <FormTextInput
+                  label="Email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <FormTextInput
+                  label="Password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <Box
                   display="flex"
-                  mx="auto"
-                  px="3rem"
-                  mt="3rem"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    login();
-                  }}
+                  flexWrap="nowrap"
+                  alignContent="space-around"
                 >
-                  Login
-                </ButtonPrimary>
-                <ButtonPrimary
-                  bg="grey"
-                  display="flex"
-                  mx="auto"
-                  px="3rem"
-                  mt="3rem"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    createUser();
-                  }}
-                >
-                  Register
-                </ButtonPrimary>
+                  <ButtonPrimary
+                    bg="blue"
+                    display="flex"
+                    mx="auto"
+                    px="3rem"
+                    mt="3rem"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      login();
+                    }}
+                  >
+                    Login
+                  </ButtonPrimary>
+                  <ButtonPrimary
+                    bg="grey"
+                    display="flex"
+                    mx="auto"
+                    px="3rem"
+                    mt="3rem"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      createUser();
+                    }}
+                  >
+                    Register
+                  </ButtonPrimary>
+                </Box>
+                <div>{info}</div>
               </Box>
-              <div>{info}</div>
-            </Box>
-          </form>
-
+            </form>
+          </Box>
           <div className="errors">{error}</div>
         </Box>
       )}

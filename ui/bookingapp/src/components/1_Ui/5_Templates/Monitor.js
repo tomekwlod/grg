@@ -42,7 +42,7 @@ export const Monitor = (props) => {
   };
 
   return (
-    <>
+    <Box>
       <form>
         <Box
           display="flex"
@@ -63,6 +63,6 @@ export const Monitor = (props) => {
       <p>CPU: {CPU}</p>
       <p>MemoryFree: {MemoryFree}M</p>
       <p>MemoryUsed: {MemoryUsed}M</p>
-    </>
+    </Box>
   );
 };

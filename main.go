@@ -5,8 +5,10 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/gorilla/handlers"
 	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpcauth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
@@ -104,7 +106,7 @@ func main() {
 	r := http.NewServeMux()
 
 	// Load the static webpage with a http fileserver
-	webapp := http.FileServer(http.Dir("ui/bookingapp/build"))
+	webapp := handlers.CombinedLoggingHandler(os.Stderr, http.FileServer(http.Dir("ui/bookingapp/build")))
 
 	// Host the Web Application at /, and wrap it in the GRPC Multiplexer
 	// This allows grpc requests to transfer over HTTP1. then be

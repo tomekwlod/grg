@@ -12,7 +12,7 @@ export const ButtonPrimary = forwardRef(({ disabled, ...props }, ref) => (
     minHeight="50px"
     minWidth="130px"
     px="1.8rem"
-    borderRadius="100rem"
+    borderRadius="0.2rem"
     color="white"
     fontWeight="primary.bold"
     fontSize="1rem"

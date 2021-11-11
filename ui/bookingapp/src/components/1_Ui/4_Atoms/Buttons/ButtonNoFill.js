@@ -12,7 +12,7 @@ export const ButtonNoFill = forwardRef(({ ...props }, ref) => (
     minHeight="50px"
     minWidth="130px"
     px="1.5rem"
-    borderRadius="100rem"
+    borderRadius="0.2rem"
     borderStyle="solid"
     borderWidth="thin"
     fontWeight="heading.bold"
@@ -22,7 +22,7 @@ export const ButtonNoFill = forwardRef(({ ...props }, ref) => (
       transition: "background-color 0.2s ease",
       ":hover": {
         bg: "accent.30",
-        color: "white"
+        color: "white",
       },
     })}
     ref={ref}
