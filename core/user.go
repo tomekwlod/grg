@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"log"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -24,7 +23,6 @@ func (u *User) ValidatePassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 
 	if err != nil {
-		log.Println("Problem when comparing passwords", err)
 		return false
 	}
 
