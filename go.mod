@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.15.1
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/gorilla/handlers v1.5.1 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/improbable-eng/grpc-web v0.14.1

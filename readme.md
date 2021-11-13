@@ -47,6 +47,11 @@ GRANT ALL PRIVILEGES ON DATABASE grg TO grg;
 - https://github.com/jergoo/go-grpc-tutorial/blob/master/src/proto/compile.sh - compiling more protos
 - https://github.com/zhuge20100104/grpc-demo/blob/master/grpc-15/server/gen.bat - also compiling more protos (also cert example)
 
+### GO PROTO TESTS
+- https://github.com/grpc/grpc-go/blob/v1.31.x/examples/helloworld/mock_helloworld/hw_mock_test.go - examples
+- https://github.com/jetstack/navigator/blob/master/vendor/google.golang.org/grpc/Documentation/gomock-example.md
+- https://tutorialedge.net/courses/go-grpc-services-course/02-project-setup/ - videos
+
 ### GRPC Videos
 - https://www.youtube.com/watch?v=QmIdWTidEa8 - simple example
 
