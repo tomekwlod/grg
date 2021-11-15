@@ -1,3 +1,5 @@
 .env
+.env.kub
 coverage.html
 coverage.out
+*_TMP.yaml*
