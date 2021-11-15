@@ -35,7 +35,7 @@ func (m *MonitorService) Monitor(req *pb.MonitorRequest, stream pb.MonitorServic
 		ms = 500
 	}
 
-	// Start a ticker that executes each 2 seconds
+	// Start a ticker that executes each X seconds
 	timer := time.NewTicker(time.Duration(ms) * time.Millisecond)
 
 	for {
@@ -52,6 +52,7 @@ func (m *MonitorService) Monitor(req *pb.MonitorRequest, stream pb.MonitorServic
 			}
 
 			err = stream.Send(hwStats)
+
 			if err != nil {
 				log.Println(err.Error())
 			}

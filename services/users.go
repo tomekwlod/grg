@@ -16,6 +16,7 @@ func NewUserService(db *db.DB) *UserService {
 
 // implements methods that are intercepted by AuthFunc - only authenticated access!
 type UserService struct {
+	// embedding pb server
 	pb.UnimplementedUserServiceServer
 	db *db.DB
 }

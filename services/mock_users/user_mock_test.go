@@ -29,7 +29,7 @@ func TestUserService(t *testing.T) {
 
 		user := &pb.User{
 			Id:    1,
-			Email: "some@email.com",
+			Email: wantEmail,
 		}
 
 		users.User = append(users.User, user)
@@ -40,11 +40,11 @@ func TestUserService(t *testing.T) {
 			// &rpcMsg{msg: req},
 		).Return(&users, nil)
 
-		testSayHello(t, mockUserClient)
+		testList(t, mockUserClient)
 	})
 }
 
-func testSayHello(t *testing.T, client pb.UserServiceClient) {
+func testList(t *testing.T, client pb.UserServiceClient) {
 
 	u, err := client.List(noContext, &pb.UsersParams{})
 
