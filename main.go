@@ -9,8 +9,6 @@ import (
 	"time"
 
 	"github.com/gorilla/handlers"
-	grpcMiddleware "github.com/grpc-ecosystem/go-grpc-middleware"
-	grpcauth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/joho/godotenv"
 	"github.com/tomekwlod/grg/auth"
@@ -18,13 +16,14 @@ import (
 	"github.com/tomekwlod/grg/pb"
 	"github.com/tomekwlod/grg/services"
 	"github.com/tomekwlod/utils/env"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
-type grpcMultiplexer struct {
-	*grpcweb.WrappedGrpcServer
-}
+const (
+	API_TCP_PORT = 9990
+	WEB_PORT     = 8080
+	PEM_PATH     = "cert/server.crt"
+	KEY_PATH     = "cert/server.key"
+)
 
 var (
 	dbConn *db.DB
@@ -59,26 +58,15 @@ func main() {
 	// initialize the auth interceptor/middleware
 	ath := auth.NewAuth(secret)
 
-	apiServer, err := GenerateTLSApi("cert/server.crt", "cert/server.key", ath.AuthFunc)
+	apiServer, err := NewApiServer(PEM_PATH, KEY_PATH, ath.AuthFunc)
 
 	if err != nil {
-		log.Fatalf("Problem with spinning up a server: %s", err)
-	}
-
-	l, err := net.Listen("tcp", "127.0.0.1:9990")
-
-	if err != nil {
-		log.Fatalf("Problem with listening on a port %s: %s", "9990", err)
+		log.Fatalf("Problem with spinning up the API Server: %s", err)
 	}
 
 	// We need to tell the code WHAT TO do on each request, ie. The business logic.
 	// In GRPC cases, the Server is acutally just an Interface
 	// So we need a struct which fulfills the server interface
-	// see server.go
-	// I MOVED THIS LINE BELOW
-	// s := services.NewPingService(dbConn)
-
-	// Register the API server as a PingPong Server
 	// The register function is a generated piece by protoc.
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
@@ -88,19 +76,23 @@ func main() {
 	pb.RegisterMonitorServiceServer(apiServer, new(services.MonitorService)) // if there is no costructor
 	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 
+	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", "127.0.0.1", API_TCP_PORT))
+
+	if err != nil {
+		log.Fatalf("Problem with listening on a port %d: %s", API_TCP_PORT, err.Error())
+	}
+
 	// Start serving in a goroutine to not block
 	go func() {
 		log.Fatal(apiServer.Serve(l))
 	}()
 
 	// Wrap the GRPC Server in grpc-web and also host the UI
-	grpcWebServer := grpcweb.WrapServer(apiServer)
+	grpcWebServer := grpcweb.WrapServer(apiServer.Server)
 
 	// Lets put the wrapped grpc server in our multiplexer struct so
 	// it can reach the grpc server in its handler
-	multiplex := grpcMultiplexer{
-		grpcWebServer,
-	}
+	multiplex := NewGrpcMultiplexer(grpcWebServer)
 
 	// We need a http router
 	r := http.NewServeMux()
@@ -116,43 +108,12 @@ func main() {
 	// Create a HTTP server and bind the router to it, and set wanted address
 	srv := &http.Server{
 		Handler: r,
-		Addr:    "localhost:8080",
+		Addr:    fmt.Sprintf("localhost:%d", WEB_PORT),
 		// the timeouts are disabled because they close the grpc stream
 		// WriteTimeout: 15 * time.Second,
 		// ReadTimeout: 15 * time.Second,
 	}
 
 	// Serve the webapp over TLS
-	log.Fatal(srv.ListenAndServeTLS("cert/server.crt", "cert/server.key"))
-}
-
-func GenerateTLSApi(pemPath, keyPath string, ath grpcauth.AuthFunc) (*grpc.Server, error) {
-	cred, err := credentials.NewServerTLSFromFile(pemPath, keyPath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	s := grpc.NewServer(
-		grpc.Creds(cred),
-		grpc.UnaryInterceptor(grpcMiddleware.ChainUnaryServer(
-			grpcauth.UnaryServerInterceptor(ath),
-		)),
-		// grpc.StreamInterceptor(grpcMiddleware.ChainStreamServer(
-		// 	grpcauth.StreamServerInterceptor(ath),
-		// )),
-	)
-
-	return s, nil
-}
-
-// Handler is used to route requests to either grpc or to regular http
-func (m *grpcMultiplexer) Handler(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if m.IsGrpcWebRequest(r) {
-			m.ServeHTTP(w, r)
-			return
-		}
-		next.ServeHTTP(w, r)
-	})
+	log.Fatal(srv.ListenAndServeTLS(PEM_PATH, KEY_PATH))
 }
