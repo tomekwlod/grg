@@ -1,3 +1,5 @@
+//go:generate mockgen -destination=mock_users/users__mocks_test.go -package=mock_pb github.com/tomekwlod/grg/pb UserServiceClient
+
 package services
 
 import (

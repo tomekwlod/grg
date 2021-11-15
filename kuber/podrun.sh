@@ -3,10 +3,7 @@
 set -e # forward exit code and stop on first error
 set -x # log
 
-# pwd
-
 ls -alh
-
 (cd /usr/envdir && ls -alh)
 
 cp /usr/envdir/.env.kub .env

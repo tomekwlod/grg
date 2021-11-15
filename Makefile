@@ -29,12 +29,6 @@ mdown:
 mdownone:
 	go run cmd/migrate/migrate.go onedown
 
-setup:
-	(rm -rf pingpong/*.pb.go && rm -rf ui/bookingapp/src/proto/*)
-	make frontinit
-	make protogen
-	make frontbuild
-
 run:
 	go run .
 fbrun: frontbuild run
@@ -46,9 +40,10 @@ gotest:
 gocov:
 	go test ./... -coverprofile coverage.out
 	go tool cover -html=coverage.out -o coverage.html
+# (mkdir -p services/mock_users  && cd pb && mockgen github.com/tomekwlod/grg/pb UserServiceClient   > ../services/mock_users/user_mock.go)
+# (mkdir -p services/mock_office && cd pb && mockgen github.com/tomekwlod/grg/pb OfficeServiceClient > ../services/mock_office/office_mock.go)
 
 .PHONY: \
 	cert \
 	protogen \
-	setup \
 	run
