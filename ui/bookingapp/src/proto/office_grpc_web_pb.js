@@ -131,5 +131,66 @@ proto.office.OfficeServicePromiseClient.prototype.create =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.office.EmptyRequest,
+ *   !proto.office.Offices>}
+ */
+const methodDescriptor_OfficeService_Get = new grpc.web.MethodDescriptor(
+  '/office.OfficeService/Get',
+  grpc.web.MethodType.UNARY,
+  proto.office.EmptyRequest,
+  proto.office.Offices,
+  /**
+   * @param {!proto.office.EmptyRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.office.Offices.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.office.EmptyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.office.Offices)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.office.Offices>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.office.OfficeServiceClient.prototype.get =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/office.OfficeService/Get',
+      request,
+      metadata || {},
+      methodDescriptor_OfficeService_Get,
+      callback);
+};
+
+
+/**
+ * @param {!proto.office.EmptyRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.office.Offices>}
+ *     Promise that resolves to the response
+ */
+proto.office.OfficeServicePromiseClient.prototype.get =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/office.OfficeService/Get',
+      request,
+      metadata || {},
+      methodDescriptor_OfficeService_Get);
+};
+
+
 module.exports = proto.office;
 

@@ -31,6 +31,33 @@ type OfficeService struct {
 // 	return ctx, nil
 // }
 
+func (as *OfficeService) Get(ctx context.Context, req *pb.EmptyRequest) (*pb.Offices, error) {
+	// getting UID from auth context
+	uid, ok := ctx.Value(auth.UIDFromClaim).(int64)
+	if !ok && uid <= 0 {
+		return nil, status.Errorf(codes.Unauthenticated, "context not authenticated")
+	}
+
+	res, err := officestore.New(as.db).Find(ctx)
+
+	if err != nil {
+		status.Errorf(codes.Internal, err.Error())
+	}
+
+	offices := pb.Offices{}
+
+	for _, o := range res {
+		offices.Results = append(offices.Results, &pb.Offices_Office{
+			Id:              o.ID,
+			AdminId:         o.AdminID,
+			Name:            o.Name,
+			MaxPeoplePerDay: o.MaxPeoplePerDay,
+		})
+	}
+
+	return &offices, nil
+}
+
 func (as *OfficeService) Create(ctx context.Context, req *pb.CreateOfficeRequest) (*pb.CreateOfficeResponse, error) {
 
 	if req.GetName() == "" {

@@ -36,3 +36,26 @@ func (u *officeStore) FindOne(ctx context.Context, name string) (*core.Office, e
 
 	return office, nil
 }
+
+func (u *officeStore) Find(ctx context.Context) ([]*core.Office, error) {
+	rows, err := u.db.QueryxContext(ctx, "SELECT id, admin_id, name, description, address, telephone, max_people_pd FROM office")
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var offices []*core.Office
+
+	for rows.Next() {
+
+		var office core.Office
+
+		rows.Scan(&office)
+
+		offices = append(offices, &office)
+	}
+
+	return offices, nil
+}

@@ -3,6 +3,7 @@ syntax = "proto3";
 package office;
 option go_package="/.;pb";
 
+message EmptyRequest {}
 message CreateOfficeRequest {
   string name = 1;
   string adminId = 2;
@@ -13,7 +14,17 @@ message CreateOfficeResponse {
   int64  adminId = 2;
   string name = 3;
 }
+message Offices {
+  message Office {
+    int64 id = 1;
+    int64 adminId = 2;
+    string name = 3;
+    int64 maxPeoplePerDay = 4;
+  }
+  repeated Office results = 1;
+}
 
 service OfficeService {
   rpc Create(CreateOfficeRequest) returns (CreateOfficeResponse) {};
+  rpc Get(EmptyRequest) returns (Offices) {};
 }
