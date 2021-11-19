@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Box, FormTextInput } from "../../../components";
+import { Box, FormTextInput } from "..";
 
-import { MonitorServiceClient } from "../../../proto/monitor_grpc_web_pb";
-import { MonitorRequest } from "../../../proto/monitor_pb";
+import { MonitorServiceClient } from "../../proto/monitor_grpc_web_pb";
+import { MonitorRequest } from "../../proto/monitor_pb";
 
 var monitorClient = new MonitorServiceClient("https://localhost:8080");
 

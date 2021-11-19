@@ -1,4 +1,4 @@
 export * from "./Office";
-export { LoginForm } from "./LoginForm";
+export { Homepage } from "./Homepage";
+export { AboutUs } from "./AboutUs";
 export { AdminArea } from "./AdminArea";
-export { Monitor } from "./Monitor";

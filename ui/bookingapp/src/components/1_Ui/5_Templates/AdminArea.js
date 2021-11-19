@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Monitor, CreateOffice } from "../../../components";
-import { Box } from "..";
+import { Box, RootFront } from "..";
 
 /* THIS FILE NEEDS TO BE MOVED TO THE HIGHER DIRECTORY AS MUCH AS POSSIBLE */
 /* THIS FILE NEEDS TO BE MOVED TO THE HIGHER DIRECTORY AS MUCH AS POSSIBLE */
@@ -13,12 +13,20 @@ import { Box } from "..";
 /* THIS FILE NEEDS TO BE MOVED TO THE HIGHER DIRECTORY AS MUCH AS POSSIBLE */
 
 import { GlobalContext, token } from "../../../context/GlobalState";
+import { useNavigate } from "react-router";
 
 export const AdminArea = (props) => {
   useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  });
 
   return (
-    <>
+    <RootFront title="Admin" description="Restricted area">
       {token && (
         <Box
           style={{
@@ -32,6 +40,6 @@ export const AdminArea = (props) => {
           <Monitor />
         </Box>
       )}
-    </>
+    </RootFront>
   );
 };

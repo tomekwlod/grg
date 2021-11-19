@@ -41,7 +41,7 @@ export const GlobalProvider = ({ children }) => {
     }
 
     console.log("effect auth on load...");
-  }, []);
+  });
 
   useEffect(() => {
     const dateNow = new Date();

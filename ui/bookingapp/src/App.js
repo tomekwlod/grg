@@ -1,5 +1,4 @@
 import React from "react";
-import { LoginForm, AdminArea } from "./components";
 
 import { GlobalProvider } from "./context/GlobalState";
 
@@ -81,11 +80,7 @@ function App() {
           alignContent: "space-around",
           margin: "auto",
         }}
-      >
-        <h1>An example app</h1>
-        <LoginForm />
-        <AdminArea />
-      </div>
+      ></div>
     </GlobalProvider>
   );
 }
