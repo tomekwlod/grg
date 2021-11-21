@@ -1,7 +1,14 @@
 import React from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AboutUs, AdminArea, Homepage, LoginForm } from "./components";
+import {
+  AboutUs,
+  AdminDashLayout,
+  Homepage,
+  LoginForm,
+  Monitor,
+  Office,
+} from "./components";
 
 import { GlobalProvider } from "./context/GlobalState";
 
@@ -15,7 +22,10 @@ const Routing = () => {
           <Route path="/" element={<Homepage />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/login" element={<LoginForm />} />
-          <Route path="/admin" element={<AdminArea />} />
+          <Route path="admin" element={<AdminDashLayout />}>
+            <Route path="monitor" element={<Monitor />} />
+            <Route path="office" element={<Office />} />
+          </Route>
           {/* <PrivateRoute path="/user/dashboard" exact component={Dashboard} />
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard} />
         <AdminRoute path="/create/category" exact component={AddCategory} />
@@ -32,3 +42,14 @@ export default Routing;
 const Error404 = () => {
   return <>404 here</>;
 };
+// const AdminLayout = () => {
+//   return (
+//     <AdminDashLayout title="Admin" description="Restricted area">
+//       <nav>
+//         <Link to="monitor">Monitor</Link>
+//         <Link to="office">Office</Link>
+//       </nav>
+//       <Outlet />
+//     </AdminDashLayout>
+//   );
+// };

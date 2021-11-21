@@ -1,12 +1,12 @@
 import React, { useState, useContext } from "react";
 
-import { Box, FormTextInput, ButtonPrimary } from "../../../../components";
+import { Box, FormTextInput, ButtonPrimary } from "../../../components";
 
 import {
   GlobalContext,
   state,
   createOffice,
-} from "../../../../context/GlobalState";
+} from "../../../context/GlobalState";
 
 export const CreateOffice = (props) => {
   useContext(GlobalContext);
