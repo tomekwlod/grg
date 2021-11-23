@@ -91,7 +91,7 @@ func TestOffice(t *testing.T) {
 			t.Error(err)
 		}
 	})
-	t.Run("FIND", func(t *testing.T) {
+	t.Run("FIND ONE", func(t *testing.T) {
 		officeStore := New(dbConn).(*officeStore)
 
 		office, err := officeStore.FindOne(noContext, newOffice.Name)
@@ -102,6 +102,23 @@ func TestOffice(t *testing.T) {
 
 		if newOffice.Name != office.Name {
 			t.Errorf("Expected an office name to be: `%s`, but got `%s`", newOffice.Name, office.Name)
+		}
+
+	})
+	t.Run("FIND ALL", func(t *testing.T) {
+		officeStore := New(dbConn).(*officeStore)
+
+		offices, err := officeStore.Find(noContext, int64(1))
+
+		if err != nil {
+			t.Errorf("Expected to find one office, but got en error instead: %+v", err)
+		}
+		if len(offices) != 1 {
+			t.Errorf("Expected to fetch `%d` office, but got `%d`", 1, len(offices))
+		}
+
+		if offices[0].Name != newOffice.Name {
+			t.Errorf("Expected to find an office with the name `%s`, got: `%s` ", newOffice.Name, offices[0].Name)
 		}
 
 	})

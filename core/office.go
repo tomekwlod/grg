@@ -6,7 +6,7 @@ import (
 
 type OfficeStore interface {
 	Create(context.Context, *Office) error
-	Find(context.Context) ([]*Office, error)
+	Find(ctx context.Context, adminId int64) ([]*Office, error)
 	FindOne(context.Context, string) (*Office, error)
 }
 

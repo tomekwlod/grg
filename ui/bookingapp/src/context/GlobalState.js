@@ -1,11 +1,11 @@
 import React, { createContext, useState, useReducer, useEffect } from "react";
 
-import AppReducer from "./AppReducer.js";
+import AppReducer, { actions } from "./AppReducer.js";
 
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
-import { CreateOfficeRequest } from "../proto/office_pb";
+import { CreateOfficeRequest, EmptyRequest } from "../proto/office_pb";
 import { OfficeServiceClient } from "../proto/office_grpc_web_pb";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
@@ -24,6 +24,7 @@ export let token, setToken, tokenValidUntil;
 export const GlobalProvider = ({ children }) => {
   [state, dispatch] = useReducer(AppReducer, {
     office: {},
+    offices: [],
     error: "",
   });
 
@@ -98,6 +99,38 @@ export const GlobalProvider = ({ children }) => {
     </GlobalContext.Provider>
   );
 };
+
+export function getOffices() {
+  try {
+    var emptyRequest = new EmptyRequest();
+
+    officeClient.get(
+      emptyRequest,
+      { authorization: "Bearer " + token },
+      function (err, resp) {
+        if (err != null) {
+          dispatch({
+            type: actions.OFFICES_LIST_ERROR,
+            payload: err.message,
+          });
+          return;
+        }
+
+        const obj = resp.toObject();
+
+        dispatch({
+          type: actions.OFFICES_LIST,
+          payload: obj.resultsList,
+        });
+      }
+    );
+  } catch (err) {
+    dispatch({
+      type: actions.OFFICES_LIST_ERROR,
+      payload: err.message,
+    });
+  }
+}
 
 export function createOffice(name, maxPeoplePerDay) {
   try {

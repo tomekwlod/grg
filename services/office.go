@@ -38,7 +38,7 @@ func (as *OfficeService) Get(ctx context.Context, req *pb.EmptyRequest) (*pb.Off
 		return nil, status.Errorf(codes.Unauthenticated, "context not authenticated")
 	}
 
-	res, err := officestore.New(as.db).Find(ctx)
+	res, err := officestore.New(as.db).Find(ctx, uid)
 
 	if err != nil {
 		status.Errorf(codes.Internal, err.Error())

@@ -37,8 +37,8 @@ func (u *officeStore) FindOne(ctx context.Context, name string) (*core.Office, e
 	return office, nil
 }
 
-func (u *officeStore) Find(ctx context.Context) ([]*core.Office, error) {
-	rows, err := u.db.QueryxContext(ctx, "SELECT id, admin_id, name, description, address, telephone, max_people_pd FROM office")
+func (u *officeStore) Find(ctx context.Context, adminId int64) ([]*core.Office, error) {
+	rows, err := u.db.QueryxContext(ctx, "SELECT id, admin_id, name, description, address, telephone, max_people_pd FROM office WHERE admin_id = $1 ORDER BY id ASC", adminId)
 
 	if err != nil {
 		return nil, err
@@ -46,15 +46,14 @@ func (u *officeStore) Find(ctx context.Context) ([]*core.Office, error) {
 
 	defer rows.Close()
 
-	var offices []*core.Office
+	offices := []*core.Office{}
 
 	for rows.Next() {
+		office := new(core.Office)
 
-		var office core.Office
+		rows.StructScan(office)
 
-		rows.Scan(&office)
-
-		offices = append(offices, &office)
+		offices = append(offices, office)
 	}
 
 	return offices, nil
