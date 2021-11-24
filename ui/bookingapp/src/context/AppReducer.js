@@ -1,13 +1,12 @@
 // reducer - it is basically how we specify the application state changes
 // in response to certain actions to our store (to our context)
 
-export const actions = {
-  OFFICES_LIST: "list",
-  OFFICES_LIST_ERROR: "list_error",
-  OFFICE_CREATE: "create",
-};
+// office
+export const OFFICE_CREATE = "OFFICE_CREATE";
+export const OFFICES_LIST = "OFFICES_LIST";
+export const OFFICES_LIST_ERROR = "OFFICES_LIST_ERROR";
 
-const appReducer = (state, action) => {
+const AppReducer = (state, action) => {
   switch (action.type) {
     case "LOGIN":
       return {
@@ -23,19 +22,19 @@ const appReducer = (state, action) => {
         error: action.payload,
         isAuthenticated: false,
       };
-    case actions.OFFICE_CREATE:
+    case OFFICE_CREATE:
       return {
         ...state,
         office: action.payload,
         error: "",
       };
-    case actions.OFFICES_LIST:
+    case OFFICES_LIST:
       return {
         ...state,
         offices: action.payload,
         error: "",
       };
-    case actions.OFFICES_LIST_ERROR:
+    case OFFICES_LIST_ERROR:
       return {
         ...state,
         offices: [],
@@ -51,4 +50,4 @@ const appReducer = (state, action) => {
   }
 };
 
-export default appReducer;
+export default AppReducer;

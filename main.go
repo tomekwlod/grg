@@ -107,7 +107,7 @@ func main() {
 
 	// Create a HTTP server and bind the router to it, and set wanted address
 	srv := &http.Server{
-		Handler: r,
+		Handler: allowCORS(r),
 		Addr:    fmt.Sprintf("localhost:%d", WEB_PORT),
 		// the timeouts are disabled because they close the grpc stream
 		// WriteTimeout: 15 * time.Second,
@@ -116,4 +116,21 @@ func main() {
 
 	// Serve the webapp over TLS
 	log.Fatal(srv.ListenAndServeTLS(PEM_PATH, KEY_PATH))
+}
+
+func allowCORS(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		// (*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+		w.Header().Set("Access-Control-Allow-Headers", "*")
+
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(200)
+			w.Write([]byte("ok"))
+			return
+		}
+
+		h.ServeHTTP(w, r)
+	})
 }

@@ -52,7 +52,6 @@ export const CreateOffice = (props) => {
             Create
           </ButtonPrimary>
           <div className="errors">{state.error}</div>
-          <div>{state.office?.name}</div>
         </Box>
       </form>
     </Box>

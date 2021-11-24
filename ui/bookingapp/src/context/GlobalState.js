@@ -1,6 +1,10 @@
 import React, { createContext, useState, useReducer, useEffect } from "react";
 
-import AppReducer, { actions } from "./AppReducer.js";
+import AppReducer, {
+  OFFICES_LIST,
+  OFFICE_CREATE,
+  OFFICES_LIST_ERROR,
+} from "./AppReducer.js";
 
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
@@ -110,7 +114,7 @@ export function getOffices() {
       function (err, resp) {
         if (err != null) {
           dispatch({
-            type: actions.OFFICES_LIST_ERROR,
+            type: OFFICES_LIST_ERROR,
             payload: err.message,
           });
           return;
@@ -119,14 +123,14 @@ export function getOffices() {
         const obj = resp.toObject();
 
         dispatch({
-          type: actions.OFFICES_LIST,
+          type: OFFICES_LIST,
           payload: obj.resultsList,
         });
       }
     );
   } catch (err) {
     dispatch({
-      type: actions.OFFICES_LIST_ERROR,
+      type: OFFICES_LIST_ERROR,
       payload: err.message,
     });
   }
