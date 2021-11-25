@@ -1,13 +1,9 @@
 import React, { createContext, useState, useReducer, useEffect } from "react";
-
-import AppReducer, {
-  OFFICES_LIST,
-  OFFICE_CREATE,
-  OFFICES_LIST_ERROR,
-} from "./AppReducer.js";
-
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
+
+import reducer from "./reducer";
+import { OFFICES_LIST, OFFICE_CREATE, OFFICES_LIST_ERROR } from "./actions";
 
 import { CreateOfficeRequest, EmptyRequest } from "../proto/office_pb";
 import { OfficeServiceClient } from "../proto/office_grpc_web_pb";
@@ -18,15 +14,13 @@ var officeClient = new OfficeServiceClient("https://localhost:8080");
 export const GlobalContext = createContext({});
 
 let dispatch, setTokenValidUntil;
-export let state;
-
-export let token, setToken, tokenValidUntil;
+export let state, token, setToken, tokenValidUntil;
 
 // Provider component - in order for the other components to have access to
 // this global store we have to wrap everything using this provider
 // - children are the components within this provider
 export const GlobalProvider = ({ children }) => {
-  [state, dispatch] = useReducer(AppReducer, {
+  [state, dispatch] = useReducer(reducer, {
     office: {},
     offices: [],
     error: "",
@@ -62,31 +56,6 @@ export const GlobalProvider = ({ children }) => {
 
     console.log("effect auth...");
   });
-
-  // useEffect(() => {
-  //   // i should change it to be:
-  //   // - loading token once on component load and saving the expiration time
-  //   // - once that done we can check in another useeffect with no dependencies if the token is still valid
-
-  //   let _token = "";
-
-  //   const tkn = Cookies.get("jwt");
-
-  //   if (tkn) {
-  //     const decodedToken = jwt.decode(tkn, { complete: true });
-  //     const dateNow = new Date();
-
-  //     if (decodedToken.payload.exp * 1000 < dateNow.getTime()) {
-  //       // expired!
-  //       Cookies.remove("jwt");
-  //     } else {
-  //       _token = tkn;
-  //     }
-  //   }
-
-  //   setToken(_token);
-  //   console.log("effect auth...");
-  // });
 
   return (
     <GlobalContext.Provider
@@ -155,7 +124,7 @@ export function createOffice(name, maxPeoplePerDay) {
         }
 
         dispatch({
-          type: "CREATE_OFFICE",
+          type: OFFICE_CREATE,
           payload: resp.toObject(),
         });
       }

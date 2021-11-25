@@ -1,6 +1,6 @@
 import React from "react";
 
-import { RootFront, Monitor } from "../../../components";
+import { RootFront } from "../../../components";
 
 export const AboutUs = (props) => {
   return (

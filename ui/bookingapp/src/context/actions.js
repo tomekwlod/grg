@@ -1,0 +1,3 @@
+export const OFFICE_CREATE = "OFFICE_CREATE";
+export const OFFICES_LIST = "OFFICES_LIST";
+export const OFFICES_LIST_ERROR = "OFFICES_LIST_ERROR";

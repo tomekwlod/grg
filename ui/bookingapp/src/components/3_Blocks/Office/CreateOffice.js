@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
 import { Box, FormTextInput, ButtonPrimary } from "../../../components";
 
@@ -13,6 +13,10 @@ export const CreateOffice = (props) => {
 
   const [name, setName] = useState("");
   const [maxPeoplePerDay, setMaxPeoplePerDay] = useState(0);
+
+  useEffect(() => {
+    console.log("state", state);
+  }, [state]);
 
   return (
     <Box border="1px solid grey" width="300px">
