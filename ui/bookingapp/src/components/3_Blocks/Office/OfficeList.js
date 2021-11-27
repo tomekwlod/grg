@@ -1,6 +1,6 @@
 import React, { useEffect, useContext } from "react";
 
-import { Box } from "../../../components";
+import { Box, GreatPrimer } from "../../../components";
 
 import {
   GlobalContext,
@@ -17,15 +17,17 @@ export const OfficeList = (props) => {
   }, [token]);
 
   return (
-    <Box border="1px solid grey" width="300px">
-      <span>Offices</span>
+    <Box border="1px solid grey" width="300px" px={{ _: "1rem" }} pb="1rem">
+      <GreatPrimer>Offices</GreatPrimer>
       {state.offices.map((office) => {
-        return <div key={office.id}>{office.name}</div>;
+        return (
+          <div key={office.id}>
+            {office.id}: {office.name} - {office.maxpeopleperday}
+          </div>
+        );
       })}
 
       <div className="errors">{state.error}</div>
-
-      {state.offices.length}
     </Box>
   );
 };

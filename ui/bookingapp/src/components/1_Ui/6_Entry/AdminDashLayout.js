@@ -1,15 +1,41 @@
-import React, { useContext } from "react";
-import { Link, Outlet } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Box } from "../";
 
-import { GlobalContext } from "../../../context/GlobalState";
+import { GlobalContext, tokenValidUntil } from "../../../context/GlobalState";
 
 export const AdminDashLayout = ({ title, description, children }) => {
   useContext(GlobalContext);
+  const navigate = useNavigate();
+
+  const [d, setD] = useState(null);
+
+  const tokenDate = new Date(tokenValidUntil);
+
+  useEffect(() => {
+    if (tokenValidUntil > 0) {
+      const timer1 = setInterval(() => {
+        const now = new Date();
+
+        const secontsLeft = parseInt((tokenDate - now) / 1000, 10);
+        if (secontsLeft < 10) {
+          navigate(`/login`);
+        }
+        setD(secontsLeft);
+      }, 1000);
+
+      // this will clear Timeout
+      // when component unmount like in willComponentUnmount
+      // and show will not change to true
+      return () => {
+        clearTimeout(timer1);
+      };
+    }
+  }, [tokenValidUntil]);
 
   return (
     <Box minHeight="100vh" display="flex" flexDirection="column" margin="auto">
-      <h1>Admin dash</h1>
+      <h1>Admin dash - {d}</h1>
       <nav
         style={{
           borderBottom: "solid 1px",

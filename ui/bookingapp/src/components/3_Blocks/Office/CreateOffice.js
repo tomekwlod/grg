@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 
-import { Box, FormTextInput, ButtonPrimary } from "../../../components";
+import { Box, FormTextInput, ButtonPrimary, GreatPrimer } from "../../../components";
 
 import {
   GlobalContext,
@@ -19,8 +19,8 @@ export const CreateOffice = (props) => {
   }, [state]);
 
   return (
-    <Box border="1px solid grey" width="300px">
-      <span>Create Office</span>
+    <Box border="1px solid grey" width="300px" px={{_:"1rem"}}>
+      <GreatPrimer>Create Office</GreatPrimer>
       <form>
         <Box
           display="flex"
