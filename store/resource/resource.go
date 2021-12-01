@@ -16,6 +16,11 @@ type resourceStore struct {
 }
 
 func (r *resourceStore) Create(ctx context.Context, resource *core.Resource) error {
-	// todo
-	return nil
+	return r.db.QueryRowContext(ctx,
+		`INSERT INTO resource 
+        (name, description, office_id) 
+        VALUES ($1,$2,$3) 
+        RETURNING id`,
+		resource.Name, resource.Description, resource.OfficeID).
+		Scan(&resource.ID)
 }
