@@ -1,6 +1,7 @@
 import React, { useEffect, useContext } from "react";
+import { Link } from "react-router-dom";
 
-import { Box, GreatPrimer } from "../../../components";
+import { Box, BlockText, GreatPrimer } from "../../../components";
 
 import {
   GlobalContext,
@@ -22,7 +23,16 @@ export const OfficeList = (props) => {
       {state.offices.map((office) => {
         return (
           <div key={office.id}>
-            {office.id}: {office.name} - {office.maxpeopleperday}
+            <Link to={{ pathname: `${office.id}` }}>
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="space-between"
+              >
+                <BlockText>{office.name}</BlockText>
+                <BlockText>{office.maxpeopleperday}</BlockText>
+              </Box>
+            </Link>
           </div>
         );
       })}

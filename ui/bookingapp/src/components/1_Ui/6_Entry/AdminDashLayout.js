@@ -65,7 +65,15 @@ export const AdminDashLayout = ({ title, description, children }) => {
         <h2>{title}</h2>
         <p className="lead">{description}</p>
       </div>
-      <Outlet />
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        width="1200px"
+        margin="auto"
+      >
+        <Outlet />
+      </Box>
       {/* https://github.com/Julfikar-Haidar/react-ecommerce/blob/main/src/Routes.js */}
       {/* <Footer routes={footerRoutes} {...{ supporters, partners }} /> */}
       <div>footer</div>

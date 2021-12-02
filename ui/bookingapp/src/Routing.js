@@ -8,6 +8,7 @@ import {
   LoginForm,
   Monitor,
   Office,
+  OfficeProfile,
 } from "./components";
 
 import { GlobalProvider } from "./context/GlobalState";
@@ -20,11 +21,12 @@ const Routing = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="about" element={<AboutUs />} />
+          <Route path="login" element={<LoginForm />} />
           <Route path="admin" element={<AdminDashLayout />}>
             <Route path="monitor" element={<Monitor />} />
             <Route path="office" element={<Office />} />
+            <Route path="office/:id" element={<OfficeProfile />} />
           </Route>
           {/* <PrivateRoute path="/user/dashboard" exact component={Dashboard} />
         <AdminRoute path="/admin/dashboard" exact component={AdminDashboard} />
