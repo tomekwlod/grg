@@ -3,12 +3,21 @@ import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
 import reducer from "./reducer";
-import { OFFICES_LIST, OFFICE_CREATE, OFFICES_LIST_ERROR } from "./actions";
+import {
+  OFFICES_LIST,
+  OFFICE_CREATE,
+  OFFICES_LIST_ERROR,
+  RESOURCES_LIST,
+  RESOURCES_LIST_ERROR,
+} from "./actions";
 
 import { CreateOfficeRequest, EmptyRequest } from "../proto/office_pb";
 import { OfficeServiceClient } from "../proto/office_grpc_web_pb";
+import { ResourcesListParams } from "../proto/resource_pb";
+import { ResourceServiceClient } from "../proto/resource_grpc_web_pb";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
+var resourceClient = new ResourceServiceClient("https://localhost:8080");
 
 // Create context
 export const GlobalContext = createContext({});
@@ -23,6 +32,7 @@ export const GlobalProvider = ({ children }) => {
   [state, dispatch] = useReducer(reducer, {
     office: {},
     offices: [],
+    resources: [],
     error: "",
   });
 
@@ -94,6 +104,39 @@ export function getOffices() {
         dispatch({
           type: OFFICES_LIST,
           payload: obj.resultsList,
+        });
+      }
+    );
+  } catch (err) {
+    dispatch({
+      type: OFFICES_LIST_ERROR,
+      payload: err.message,
+    });
+  }
+}
+
+export function getResources(officeId) {
+  try {
+    var resourceParams = new ResourcesListParams();
+    resourceParams.setOfficeid(officeId);
+
+    resourceClient.list(
+      resourceParams,
+      { authorization: "Bearer " + token },
+      function (err, resp) {
+        if (err != null) {
+          dispatch({
+            type: RESOURCES_LIST_ERROR,
+            payload: err.message,
+          });
+          return;
+        }
+
+        const obj = resp.toObject();
+
+        dispatch({
+          type: RESOURCES_LIST,
+          payload: obj.resourcesList,
         });
       }
     );

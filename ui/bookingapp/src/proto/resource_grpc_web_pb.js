@@ -131,5 +131,66 @@ proto.resource.ResourceServicePromiseClient.prototype.create =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.resource.ResourcesListParams,
+ *   !proto.resource.Resources>}
+ */
+const methodDescriptor_ResourceService_List = new grpc.web.MethodDescriptor(
+  '/resource.ResourceService/List',
+  grpc.web.MethodType.UNARY,
+  proto.resource.ResourcesListParams,
+  proto.resource.Resources,
+  /**
+   * @param {!proto.resource.ResourcesListParams} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.resource.Resources.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.resource.ResourcesListParams} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.resource.Resources)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.resource.Resources>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.resource.ResourceServiceClient.prototype.list =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/resource.ResourceService/List',
+      request,
+      metadata || {},
+      methodDescriptor_ResourceService_List,
+      callback);
+};
+
+
+/**
+ * @param {!proto.resource.ResourcesListParams} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.resource.Resources>}
+ *     Promise that resolves to the response
+ */
+proto.resource.ResourceServicePromiseClient.prototype.list =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/resource.ResourceService/List',
+      request,
+      metadata || {},
+      methodDescriptor_ResourceService_List);
+};
+
+
 module.exports = proto.resource;
 

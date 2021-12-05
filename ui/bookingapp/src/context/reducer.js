@@ -1,7 +1,13 @@
 // reducer - it is basically how we specify the application state changes
 // in response to certain actions to our store (to our context)
 
-import { OFFICES_LIST, OFFICE_CREATE, OFFICES_LIST_ERROR } from "./actions";
+import {
+  OFFICES_LIST,
+  OFFICE_CREATE,
+  OFFICES_LIST_ERROR,
+  RESOURCES_LIST,
+  RESOURCES_LIST_ERROR,
+} from "./actions";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -40,6 +46,18 @@ const reducer = (state, action) => {
     case "OFFICE_ERROR":
       return {
         ...state,
+        error: action.payload,
+      };
+    case RESOURCES_LIST:
+      return {
+        ...state,
+        resources: action.payload,
+        error: "",
+      };
+    case RESOURCES_LIST_ERROR:
+      return {
+        ...state,
+        resources: [],
         error: action.payload,
       };
     default:

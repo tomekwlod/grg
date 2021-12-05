@@ -6,6 +6,7 @@ import (
 
 type ResourceStore interface {
 	Create(context.Context, *Resource) error
+	Find(ctx context.Context, officeId int64) ([]*Resource, error)
 }
 
 type Resource struct {

@@ -7,19 +7,30 @@ import {
   GlobalContext,
   state,
   token,
-  getOffices,
+  getResources,
 } from "../../../context/GlobalState";
 
 export const OfficeProfile = (props) => {
   useContext(GlobalContext);
+
+  useEffect(() => {
+    getResources(id);
+  }, [token]);
 
   const { id } = useParams();
 
   return (
     <>
       <GreatPrimer>
-        Here we're going to make a call for the office with an id: {id}
+        {state.resources.length > 0
+          ? state.resources.map((r) => (
+              <div key={r.id}>
+                {r.id}: {r.name} ({r.description})
+              </div>
+            ))
+          : "No resources found"}
       </GreatPrimer>
+      <div className="errors">{state.error}</div>
     </>
   );
 };

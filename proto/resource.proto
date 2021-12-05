@@ -12,7 +12,21 @@ message CreateResourceResponse {
   int64  officeId = 2;
   string name = 3;
 }
+message ResourcesListParams {
+  int64 officeId = 1;
+}
+message Resource {
+  int64  id = 1;
+  int64  officeId = 2;
+  string name = 3;
+  string description = 4;
+}
+message Resources {
+  repeated Resource resources = 1;
+}
+
 
 service ResourceService {
   rpc Create(CreateResourceRequest) returns (CreateResourceResponse) {};
+  rpc List(ResourcesListParams) returns (Resources) {};
 }

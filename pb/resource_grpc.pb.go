@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ResourceServiceClient interface {
 	Create(ctx context.Context, in *CreateResourceRequest, opts ...grpc.CallOption) (*CreateResourceResponse, error)
+	List(ctx context.Context, in *ResourcesListParams, opts ...grpc.CallOption) (*Resources, error)
 }
 
 type resourceServiceClient struct {
@@ -38,11 +39,21 @@ func (c *resourceServiceClient) Create(ctx context.Context, in *CreateResourceRe
 	return out, nil
 }
 
+func (c *resourceServiceClient) List(ctx context.Context, in *ResourcesListParams, opts ...grpc.CallOption) (*Resources, error) {
+	out := new(Resources)
+	err := c.cc.Invoke(ctx, "/resource.ResourceService/List", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ResourceServiceServer is the server API for ResourceService service.
 // All implementations must embed UnimplementedResourceServiceServer
 // for forward compatibility
 type ResourceServiceServer interface {
 	Create(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error)
+	List(context.Context, *ResourcesListParams) (*Resources, error)
 	mustEmbedUnimplementedResourceServiceServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedResourceServiceServer struct {
 
 func (UnimplementedResourceServiceServer) Create(context.Context, *CreateResourceRequest) (*CreateResourceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedResourceServiceServer) List(context.Context, *ResourcesListParams) (*Resources, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedResourceServiceServer) mustEmbedUnimplementedResourceServiceServer() {}
 
@@ -84,6 +98,24 @@ func _ResourceService_Create_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ResourceService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResourcesListParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ResourceServiceServer).List(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/resource.ResourceService/List",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ResourceServiceServer).List(ctx, req.(*ResourcesListParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ResourceService_ServiceDesc is the grpc.ServiceDesc for ResourceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -94,6 +126,10 @@ var ResourceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _ResourceService_Create_Handler,
+		},
+		{
+			MethodName: "List",
+			Handler:    _ResourceService_List_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
