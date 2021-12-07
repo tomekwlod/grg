@@ -103,6 +103,24 @@ func TestOffice(t *testing.T) {
 			t.Error(err)
 		}
 	})
+
+	t.Run("FIND ALL", func(t *testing.T) {
+		resourceStore := New(dbConn).(*resourceStore)
+
+		resources, err := resourceStore.Find(noContext, int64(1))
+
+		if err != nil {
+			t.Errorf("Expected to find one resource, but got en error instead: %+v", err)
+		}
+		if len(resources) != 1 {
+			t.Errorf("Expected to fetch `%d` resource, but got `%d`", 1, len(resources))
+		}
+
+		if resources[0].Name != newResource.Name {
+			t.Errorf("Expected to find a resource with the name `%s`, got: `%s` ", newResource.Name, resources[0].Name)
+		}
+
+	})
 }
 
 func prepare() (func(), error) {
