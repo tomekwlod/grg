@@ -5,6 +5,7 @@ import {
   OFFICES_LIST,
   OFFICE_CREATE,
   OFFICES_LIST_ERROR,
+  RESOURCE_CREATE,
   RESOURCES_LIST,
   RESOURCES_LIST_ERROR,
 } from "./actions";
@@ -47,6 +48,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+    case RESOURCE_CREATE:
+      return {
+        ...state,
+        resources: [...state.resources, action.payload],
+        error: "",
       };
     case RESOURCES_LIST:
       return {

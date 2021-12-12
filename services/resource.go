@@ -39,7 +39,7 @@ func (as *ResourceService) List(ctx context.Context, params *pb.ResourcesListPar
 	resources, err := resourcestore.New(as.db).Find(ctx, params.GetOfficeId())
 
 	if err != nil {
-		status.Errorf(codes.Internal, "Error when fetching resources for the officeID:%s, %+v", params.GetOfficeId(), err)
+		status.Errorf(codes.Internal, "Error when fetching resources for the officeID:%d, %+v", params.GetOfficeId(), err)
 	}
 
 	list := pb.Resources{}

@@ -7,14 +7,19 @@ import {
   OFFICES_LIST,
   OFFICE_CREATE,
   OFFICES_LIST_ERROR,
+  RESOURCE_CREATE,
   RESOURCES_LIST,
   RESOURCES_LIST_ERROR,
 } from "./actions";
 
 import { CreateOfficeRequest, EmptyRequest } from "../proto/office_pb";
 import { OfficeServiceClient } from "../proto/office_grpc_web_pb";
-import { ResourcesListParams } from "../proto/resource_pb";
+import {
+  CreateResourceRequest,
+  ResourcesListParams,
+} from "../proto/resource_pb";
 import { ResourceServiceClient } from "../proto/resource_grpc_web_pb";
+import { CreateResource } from "../components";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
 var resourceClient = new ResourceServiceClient("https://localhost:8080");
@@ -168,6 +173,38 @@ export function createOffice(name, maxPeoplePerDay) {
 
         dispatch({
           type: OFFICE_CREATE,
+          payload: resp.toObject(),
+        });
+      }
+    );
+  } catch (err) {
+    dispatch({
+      type: "OFFICE_ERROR",
+      payload: err.message,
+    });
+  }
+}
+
+export function createResource(officeId, name, description) {
+  try {
+    var createResourceRequest = new CreateResourceRequest();
+    createResourceRequest.setOfficeid(officeId);
+    createResourceRequest.setName(name);
+
+    resourceClient.create(
+      createResourceRequest,
+      { authorization: "Bearer " + token },
+      function (err, resp) {
+        if (err != null) {
+          dispatch({
+            type: "RESOURCE_ERROR",
+            payload: err.message,
+          });
+          return;
+        }
+
+        dispatch({
+          type: RESOURCE_CREATE,
           payload: resp.toObject(),
         });
       }
