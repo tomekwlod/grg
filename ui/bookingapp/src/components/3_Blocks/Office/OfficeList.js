@@ -18,24 +18,36 @@ export const OfficeList = (props) => {
   }, [token]);
 
   return (
-    <Box border="1px solid grey" width="300px" px={{ _: "1rem" }} pb="1rem">
+    <Box border="1px solid grey" width="500px" px={{ _: "1rem" }} pb="1rem">
       <GreatPrimer>Offices</GreatPrimer>
-      {state.offices.map((office) => {
-        return (
-          <div key={office.id}>
-            <Link to={{ pathname: `${office.id}` }}>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="space-between"
-              >
-                <BlockText>{office.name}</BlockText>
-                <BlockText>{office.maxpeopleperday}</BlockText>
-              </Box>
-            </Link>
-          </div>
-        );
-      })}
+      <table width="100%">
+        <thead>
+          <tr>
+            <th scope="col">Office name</th>
+            <th scope="col">People p/d</th>
+            <th scope="col">Resources</th>
+          </tr>
+        </thead>
+        <tbody>
+          {state.offices.map((office) => {
+            return (
+              <tr key={office.id}>
+                <td>
+                  <BlockText>
+                    <Link to={{ pathname: `${office.id}` }}>{office.name}</Link>
+                  </BlockText>
+                </td>
+                <td>
+                  <BlockText>{office.maxpeopleperday}</BlockText>
+                </td>
+                <td>
+                  <BlockText>{office.resourcescount}</BlockText>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
       <div className="errors">{state.error}</div>
     </Box>

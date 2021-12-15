@@ -38,7 +38,13 @@ func (u *officeStore) FindOne(ctx context.Context, name string) (*core.Office, e
 }
 
 func (u *officeStore) Find(ctx context.Context, adminId int64) ([]*core.Office, error) {
-	rows, err := u.db.QueryxContext(ctx, "SELECT id, admin_id, name, description, address, telephone, max_people_pd FROM office WHERE admin_id = $1 ORDER BY id ASC", adminId)
+	rows, err := u.db.QueryxContext(ctx, `
+SELECT o.id, admin_id, o.name, o.description, address, telephone, max_people_pd, count(r.id) as resources_count
+FROM office o
+left join resource r on (r.office_id = o.id)
+WHERE admin_id = $1
+group by o.id
+ORDER BY id ASC`, adminId)
 
 	if err != nil {
 		return nil, err
@@ -50,7 +56,6 @@ func (u *officeStore) Find(ctx context.Context, adminId int64) ([]*core.Office, 
 
 	for rows.Next() {
 		office := new(core.Office)
-
 		rows.StructScan(office)
 
 		offices = append(offices, office)

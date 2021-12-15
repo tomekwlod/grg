@@ -18,4 +18,5 @@ type Office struct {
 	Address         string `json:"address" db:"address"`
 	Telephone       string `json:"telephone" db:"telephone"`
 	MaxPeoplePerDay int64  `json:"max_people_pd" db:"max_people_pd"`
+	ResourcesCount  int64  `json:"resources_count" db:"resources_count"`
 }

@@ -20,6 +20,7 @@ message Offices {
     int64 adminId = 2;
     string name = 3;
     int64 maxPeoplePerDay = 4;
+    int64 resourcesCount = 5;
   }
   repeated Office results = 1;
 }

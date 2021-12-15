@@ -763,7 +763,8 @@ proto.office.Offices.Office.toObject = function(includeInstance, msg) {
     id: jspb.Message.getFieldWithDefault(msg, 1, 0),
     adminid: jspb.Message.getFieldWithDefault(msg, 2, 0),
     name: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    maxpeopleperday: jspb.Message.getFieldWithDefault(msg, 4, 0)
+    maxpeopleperday: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    resourcescount: jspb.Message.getFieldWithDefault(msg, 5, 0)
   };
 
   if (includeInstance) {
@@ -815,6 +816,10 @@ proto.office.Offices.Office.deserializeBinaryFromReader = function(msg, reader) 
     case 4:
       var value = /** @type {number} */ (reader.readInt64());
       msg.setMaxpeopleperday(value);
+      break;
+    case 5:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setResourcescount(value);
       break;
     default:
       reader.skipField();
@@ -870,6 +875,13 @@ proto.office.Offices.Office.serializeBinaryToWriter = function(message, writer) 
   if (f !== 0) {
     writer.writeInt64(
       4,
+      f
+    );
+  }
+  f = message.getResourcescount();
+  if (f !== 0) {
+    writer.writeInt64(
+      5,
       f
     );
   }
@@ -945,6 +957,24 @@ proto.office.Offices.Office.prototype.getMaxpeopleperday = function() {
  */
 proto.office.Offices.Office.prototype.setMaxpeopleperday = function(value) {
   return jspb.Message.setProto3IntField(this, 4, value);
+};
+
+
+/**
+ * optional int64 resourcesCount = 5;
+ * @return {number}
+ */
+proto.office.Offices.Office.prototype.getResourcescount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.office.Offices.Office} returns this
+ */
+proto.office.Offices.Office.prototype.setResourcescount = function(value) {
+  return jspb.Message.setProto3IntField(this, 5, value);
 };
 
 

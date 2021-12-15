@@ -52,6 +52,7 @@ func (as *OfficeService) Get(ctx context.Context, req *pb.EmptyRequest) (*pb.Off
 			AdminId:         o.AdminID,
 			Name:            o.Name,
 			MaxPeoplePerDay: o.MaxPeoplePerDay,
+			ResourcesCount:  o.ResourcesCount,
 		})
 	}
 
