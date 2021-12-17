@@ -28,7 +28,7 @@ var resourceClient = new ResourceServiceClient("https://localhost:8080");
 export const GlobalContext = createContext({});
 
 let dispatch, setTokenValidUntil;
-export let state, token, setToken, tokenValidUntil;
+export let state, token, setToken, user, setUser, tokenValidUntil;
 
 // Provider component - in order for the other components to have access to
 // this global store we have to wrap everything using this provider
@@ -43,6 +43,7 @@ export const GlobalProvider = ({ children }) => {
 
   [token, setToken] = useState("");
   [tokenValidUntil, setTokenValidUntil] = useState(0);
+  [user, setUser] = useState({});
 
   useEffect(() => {
     const tkn = Cookies.get("jwt");
@@ -52,6 +53,8 @@ export const GlobalProvider = ({ children }) => {
 
       setToken(tkn);
       setTokenValidUntil(decodedToken.payload.exp * 1000);
+
+      // setUser(decodedToken.payload)
     }
 
     console.log("effect auth on load...");
@@ -64,6 +67,7 @@ export const GlobalProvider = ({ children }) => {
       if (tokenValidUntil < dateNow.getTime()) {
         setToken("");
         setTokenValidUntil(0);
+        // setUser({})
         // expired!
         Cookies.remove("jwt");
       }

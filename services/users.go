@@ -24,7 +24,7 @@ type UserService struct {
 func (us *UserService) List(ctx context.Context, params *pb.UsersParams) (*pb.Users, error) {
 	users := pb.Users{}
 
-	res, err := userstore.New(us.db).Find(ctx, params.Email)
+	res, err := userstore.New(us.db).List(ctx)
 
 	if err != nil {
 		return nil, err

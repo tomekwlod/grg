@@ -73,11 +73,11 @@ func TestUser(t *testing.T) {
 			}
 		}
 	})
-	t.Run("FIND ONE", func(t *testing.T) {
+	t.Run("FIND ONE BY EMAIL", func(t *testing.T) {
 
 		wantPassword := "password"
 
-		user, err := store.FindOne(noContext, "test2@email.com")
+		user, err := store.FindByEmail(noContext, "test2@email.com")
 
 		if err != nil {
 			t.Error(err)
@@ -87,9 +87,9 @@ func TestUser(t *testing.T) {
 			t.Errorf("Want user's password to be `%s`, got `%s`", wantPassword, user.Password)
 		}
 	})
-	t.Run("FIND WRONG ONE", func(t *testing.T) {
+	t.Run("FIND WRONG ONE BY EMAIL", func(t *testing.T) {
 
-		user, err := store.FindOne(noContext, "not-existing@email.com")
+		user, err := store.FindByEmail(noContext, "not-existing@email.com")
 
 		if err == nil {
 			t.Errorf("Expected an error: `sql: no rows in result set`, got user: %v", user)
@@ -103,7 +103,7 @@ func TestUser(t *testing.T) {
 
 		wantCount := 2
 
-		users, err := store.Find(noContext, "")
+		users, err := store.List(noContext)
 
 		if err != nil {
 			t.Error(err)

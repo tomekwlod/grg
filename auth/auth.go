@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	grpcauth "github.com/grpc-ecosystem/go-grpc-middleware/auth"
+	"github.com/tomekwlod/grg/core"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -25,9 +26,9 @@ const (
 )
 
 type Claims struct {
-	UID      int64  `json:"uid"`
-	Username string `json:"username"`
-	Role     string `json:"role"`
+	UID      int64    `json:"uid"`
+	Username string   `json:"username"`
+	Roles    []string `json:"roles"`
 	jwt.StandardClaims
 }
 
@@ -88,13 +89,18 @@ func validateToken(tokenString string, secretSigningKey []byte) (*Claims, error)
 
 // todo:
 // - token expiration!!
-// - role is fake
-func GenerateToken(uid int64, username, role string, signingSecret []byte) (string, error) {
+func GenerateToken(user *core.User, signingSecret []byte) (string, error) {
+	roles := []string{}
+
+	for _, role := range user.Roles {
+		roles = append(roles, role.Name)
+	}
+
 	// Create the Claims
 	claims := Claims{
-		uid,
-		username,
-		role,
+		user.ID,
+		user.Email,
+		roles,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * time.Duration(1)).Unix(),
 			// ExpiresAt: time.Now().Add(time.Minute * time.Duration(1)).Unix(),

@@ -1,3 +1,3 @@
 export { Homepage } from "./Homepage";
-export { AboutUs } from "./AboutUs";
+export { Book } from "./Book";
 export * from "./Admin";

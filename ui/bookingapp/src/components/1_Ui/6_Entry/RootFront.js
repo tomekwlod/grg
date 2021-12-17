@@ -24,7 +24,7 @@ export const RootFront = ({ title, description, children }) => {
           <Link to="/">Home</Link>
         </Box>
         <Box display="inline-flex" p={"1rem"} mx={"1rem"}>
-          <Link to="/about">About us</Link>
+          <Link to="/book">Booking</Link>
         </Box>
         {!token && (
           <Box display="inline-flex" p={"1rem"} mx={"1rem"}>

@@ -2,7 +2,7 @@ import React from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
-  AboutUs,
+  Book,
   AdminDashLayout,
   Homepage,
   LoginForm,
@@ -21,7 +21,7 @@ const Routing = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="about" element={<AboutUs />} />
+          <Route path="book" element={<Book />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="admin" element={<AdminDashLayout />}>
             <Route path="monitor" element={<Monitor />} />

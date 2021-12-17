@@ -8,14 +8,15 @@ import (
 
 type UserStore interface {
 	Create(context.Context, *User) error
-	FindOne(ctx context.Context, email string) (*User, error)
-	Find(ctx context.Context, email string) ([]*User, error)
+	FindByEmail(ctx context.Context, email string) (*User, error)
+	List(ctx context.Context) ([]*User, error)
 }
 
 type User struct {
 	ID       int64  `json:"id" db:"id"`
 	Email    string `json:"email" db:"email"`
 	Password string `json:"password" db:"password"`
+	Roles    []Role `json:"roles" db:"roles"`
 }
 
 func (u *User) ValidatePassword(password string) bool {

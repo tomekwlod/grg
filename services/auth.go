@@ -67,7 +67,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	var user *core.User
 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
-		user, err = userstore.New(tx).FindOne(ctx, req.GetEmail())
+		user, err = userstore.New(tx).FindByEmail(ctx, req.GetEmail())
 
 		return err
 	})
@@ -81,7 +81,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Errorf(codes.Unauthenticated, "incorrect username or password")
 	}
 
-	token, err := auth.GenerateToken(user.ID, user.Email, "simple_user", as.auth.SecretSigningKey) // user.Role
+	token, err := auth.GenerateToken(user, as.auth.SecretSigningKey)
 
 	if err != nil {
 		log.Printf("%v", err)

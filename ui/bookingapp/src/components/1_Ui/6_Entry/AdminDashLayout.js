@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Box } from "../";
 
-import { GlobalContext, tokenValidUntil } from "../../../context/GlobalState";
+import { GlobalContext, tokenValidUntil, token } from "../../../context/GlobalState";
 
 export const AdminDashLayout = ({ title, description, children }) => {
   useContext(GlobalContext);
@@ -13,6 +13,9 @@ export const AdminDashLayout = ({ title, description, children }) => {
   const tokenDate = new Date(tokenValidUntil);
 
   useEffect(() => {
+    // if (!token) {
+    //   navigate(`/login`);
+    // }
     if (tokenValidUntil > 0) {
       const timer1 = setInterval(() => {
         const now = new Date();
