@@ -1,10 +1,12 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
+import jwt from "jsonwebtoken";
+
 import Cookies from "js-cookie";
 import { Box, FormTextInput, ButtonPrimary } from "..";
 
-import { GlobalContext, setToken } from "../../context/GlobalState";
+import { GlobalContext, setToken, setUser } from "../../context/GlobalState";
 
 import { AuthServiceClient } from "../../proto/auth_grpc_web_pb";
 import { LoginRequest, RegisterRequest } from "../../proto/auth_pb";
@@ -36,6 +38,10 @@ export const LoginForm = (props) => {
 
         setToken(obj.token);
         setError("");
+
+        const decodedToken = jwt.decode(obj.token, { complete: true });
+
+        setUser(decodedToken.payload);
 
         Cookies.set("jwt", obj.token, {
           path: "/",

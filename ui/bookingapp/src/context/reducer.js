@@ -2,6 +2,7 @@
 // in response to certain actions to our store (to our context)
 
 import {
+  USER_SET,
   OFFICES_LIST,
   OFFICE_CREATE,
   OFFICES_LIST_ERROR,
@@ -12,19 +13,10 @@ import {
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "LOGIN":
+    case USER_SET:
       return {
         ...state,
-        token: action.payload,
-        isAuthenticated: true,
-        error: "",
-      };
-    case "LOGIN_ERROR":
-      return {
-        ...state,
-        token: "",
-        error: action.payload,
-        isAuthenticated: false,
+        user: action.payload,
       };
     case OFFICE_CREATE:
       return {

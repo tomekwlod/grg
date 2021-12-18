@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Box } from "../";
 
-import { GlobalContext, token } from "../../../context/GlobalState";
+import { GlobalContext, token, user } from "../../../context/GlobalState";
 
 export const RootFront = ({ title, description, children }) => {
   useContext(GlobalContext);
@@ -31,7 +31,7 @@ export const RootFront = ({ title, description, children }) => {
             <Link to="/login">Login</Link>
           </Box>
         )}
-        {token && (
+        {user && user.roles && user.roles.includes("admin") && (
           <Box display="inline-flex" p={"1rem"} mx={"1rem"}>
             <Link to="/admin">Admin</Link>
           </Box>

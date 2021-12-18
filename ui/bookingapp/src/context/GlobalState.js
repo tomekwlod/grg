@@ -19,7 +19,6 @@ import {
   ResourcesListParams,
 } from "../proto/resource_pb";
 import { ResourceServiceClient } from "../proto/resource_grpc_web_pb";
-import { CreateResource } from "../components";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
 var resourceClient = new ResourceServiceClient("https://localhost:8080");
@@ -35,6 +34,7 @@ export let state, token, setToken, user, setUser, tokenValidUntil;
 // - children are the components within this provider
 export const GlobalProvider = ({ children }) => {
   [state, dispatch] = useReducer(reducer, {
+    user: {},
     office: {},
     offices: [],
     resources: [],
@@ -54,11 +54,11 @@ export const GlobalProvider = ({ children }) => {
       setToken(tkn);
       setTokenValidUntil(decodedToken.payload.exp * 1000);
 
-      // setUser(decodedToken.payload)
+      setUser(decodedToken.payload);
     }
 
     console.log("effect auth on load...");
-  });
+  }, []);
 
   useEffect(() => {
     const dateNow = new Date();
@@ -67,7 +67,8 @@ export const GlobalProvider = ({ children }) => {
       if (tokenValidUntil < dateNow.getTime()) {
         setToken("");
         setTokenValidUntil(0);
-        // setUser({})
+        setUser({});
+
         // expired!
         Cookies.remove("jwt");
       }

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { Box } from "../";
 
-import { GlobalContext, tokenValidUntil, token } from "../../../context/GlobalState";
+import { GlobalContext, tokenValidUntil } from "../../../context/GlobalState";
 
 export const AdminDashLayout = ({ title, description, children }) => {
   useContext(GlobalContext);

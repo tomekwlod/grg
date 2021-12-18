@@ -22,10 +22,6 @@ export const CreateResource = (props) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
-  useEffect(() => {
-    console.log("state", state);
-  }, [state]);
-
   return (
     <Box border="1px solid grey" width="300px" px={{ _: "1rem" }}>
       <GreatPrimer>Create Resource</GreatPrimer>

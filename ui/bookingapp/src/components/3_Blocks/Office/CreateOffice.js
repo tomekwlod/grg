@@ -1,6 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
 
-import { Box, FormTextInput, ButtonPrimary, GreatPrimer } from "../../../components";
+import {
+  Box,
+  FormTextInput,
+  ButtonPrimary,
+  GreatPrimer,
+} from "../../../components";
 
 import {
   GlobalContext,
@@ -14,12 +19,8 @@ export const CreateOffice = (props) => {
   const [name, setName] = useState("");
   const [maxPeoplePerDay, setMaxPeoplePerDay] = useState(0);
 
-  useEffect(() => {
-    console.log("state", state);
-  }, [state]);
-
   return (
-    <Box border="1px solid grey" width="300px" px={{_:"1rem"}}>
+    <Box border="1px solid grey" width="300px" px={{ _: "1rem" }}>
       <GreatPrimer>Create Office</GreatPrimer>
       <form>
         <Box

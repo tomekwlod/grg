@@ -22,18 +22,16 @@ export const OfficeProfile = (props) => {
   return (
     <Box display="flex" alignContent="space-around" flexDirection="row">
       <CreateResource />
-      <div>
-        <GreatPrimer>
-          {state.resources.length > 0
-            ? state.resources.map((r) => (
-                <div key={r.id}>
-                  {r.id}: {r.name} ({r.description})
-                </div>
-              ))
-            : "No resources found"}
-        </GreatPrimer>
+      <Box>
+        {state.resources.length > 0
+          ? state.resources.map((r) => (
+              <div key={r.id}>
+                {r.id}: {r.name} ({r.description})
+              </div>
+            ))
+          : "No resources found"}
         <div className="errors">{state.error}</div>
-      </div>
+      </Box>
     </Box>
   );
 };
