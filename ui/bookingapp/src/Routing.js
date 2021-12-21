@@ -2,13 +2,13 @@ import React from "react";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
-  Book,
   AdminDashLayout,
   Homepage,
   LoginForm,
   Monitor,
   Office,
   OfficeProfile,
+  Order,
 } from "./components";
 
 import { GlobalProvider } from "./context/GlobalState";
@@ -21,7 +21,7 @@ const Routing = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="book" element={<Book />} />
+          <Route path="book" element={<Order />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="admin" element={<AdminDashLayout />}>
             <Route path="monitor" element={<Monitor />} />
