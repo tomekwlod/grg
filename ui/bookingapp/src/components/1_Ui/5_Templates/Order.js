@@ -1,23 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useContext, useState } from "react";
 
 import { RootFront } from "../..";
 
 import {
   Box,
+  FormSelectInput,
   FormTextInput,
   ButtonPrimary,
-  GreatPrimer,
 } from "../../../components";
 
 import {
   GlobalContext,
   state,
-  createOffice,
+  token,
+  getOffices,
+  getResources,
 } from "../../../context/GlobalState";
 
 export const Order = (props) => {
+  useContext(GlobalContext);
+
   const [people, setPeople] = useState(1);
   const [minutes, setMinutes] = useState(15);
+  const [officeID, setOfficeID] = useState(0);
+  const [resourceID, setResourceID] = useState(0);
+
+  useEffect(() => {
+    getOffices();
+  }, [token]);
+
+  useEffect(() => {
+    if (officeID > 0) {
+      getResources(officeID);
+    }
+  }, [officeID]);
+
+  const book = (people, minutes, officeID, resourceID) => {
+    console.log("booking todo", people, minutes, officeID, resourceID);
+  };
 
   return (
     <RootFront title="Booking" description="This is a booking section">
@@ -28,9 +48,36 @@ export const Order = (props) => {
           alignContent="space-around"
           flexDirection="column"
         >
+          <FormSelectInput
+            label="Offices"
+            required={true}
+            name="office"
+            variant="secondary"
+            onChange={(e) => {
+              return setOfficeID(e.target.value);
+            }}
+            options={[{ name: "- select -", id: 0 }, ...state.offices].map(
+              (r) => {
+                return { label: `${r.name}`, value: r.id };
+              }
+            )}
+          />
+          <FormSelectInput
+            label="Resources"
+            name="resource"
+            required={true}
+            variant="secondary"
+            onChange={(e) => setResourceID(e.target.value)}
+            options={[{ name: "- select -", id: 0 }, ...state.resources].map(
+              (r) => {
+                return { label: r.name, value: r.name };
+              }
+            )}
+          />
           <FormTextInput
             label="People"
             name="people"
+            required={true}
             type="number"
             value={people}
             onChange={(e) => setPeople(e.target.value)}
@@ -38,6 +85,7 @@ export const Order = (props) => {
           <FormTextInput
             label="Minutes needed"
             name="minutes"
+            required={true}
             type="number"
             value={minutes}
             onChange={(e) => setMinutes(e.target.value)}
@@ -51,7 +99,7 @@ export const Order = (props) => {
             onClick={(e) => {
               e.preventDefault();
 
-              // createOffice(name, maxPeoplePerDay);
+              book(people, minutes, officeID, resourceID);
             }}
           >
             Book
