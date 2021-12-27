@@ -9,6 +9,8 @@ import {
   RESOURCE_CREATE,
   RESOURCES_LIST,
   RESOURCES_LIST_ERROR,
+  ORDER_CREATE,
+  ORDER_ERROR,
 } from "./actions";
 
 const reducer = (state, action) => {
@@ -58,6 +60,16 @@ const reducer = (state, action) => {
         ...state,
         resources: [],
         error: action.payload,
+      };
+    case ORDER_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case ORDER_CREATE:
+      return {
+        ...state,
+        error: "",
       };
     default:
       return state;

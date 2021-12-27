@@ -15,6 +15,7 @@ import {
   token,
   getOffices,
   getResources,
+  book,
 } from "../../../context/GlobalState";
 
 export const Order = (props) => {
@@ -35,8 +36,9 @@ export const Order = (props) => {
     }
   }, [officeID]);
 
-  const book = (people, minutes, officeID, resourceID) => {
+  const booking = (people, minutes, officeID, resourceID) => {
     console.log("booking todo", people, minutes, officeID, resourceID);
+    book(people, minutes, officeID, resourceID);
   };
 
   return (
@@ -58,7 +60,7 @@ export const Order = (props) => {
             }}
             options={[{ name: "- select -", id: 0 }, ...state.offices].map(
               (r) => {
-                return { label: `${r.name}`, value: r.id };
+                return { label: r.name, value: r.id };
               }
             )}
           />
@@ -70,7 +72,7 @@ export const Order = (props) => {
             onChange={(e) => setResourceID(e.target.value)}
             options={[{ name: "- select -", id: 0 }, ...state.resources].map(
               (r) => {
-                return { label: r.name, value: r.name };
+                return { label: r.name, value: r.id };
               }
             )}
           />
@@ -99,7 +101,7 @@ export const Order = (props) => {
             onClick={(e) => {
               e.preventDefault();
 
-              book(people, minutes, officeID, resourceID);
+              booking(people, minutes, officeID, resourceID);
             }}
           >
             Book

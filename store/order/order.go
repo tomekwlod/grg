@@ -17,7 +17,7 @@ type orderStore struct {
 
 func (r *orderStore) Create(ctx context.Context, order *core.Order) error {
 	return r.db.QueryRowContext(ctx,
-		`INSERT INTO order 
+		`INSERT INTO "order" 
         (office_id, resource_id, user_id, minutes, people, created_by, start_at) 
         VALUES ($1,$2,$3,$4,$5,$6,$7) 
         RETURNING id`,

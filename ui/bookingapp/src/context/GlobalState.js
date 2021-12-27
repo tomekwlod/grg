@@ -10,6 +10,8 @@ import {
   RESOURCE_CREATE,
   RESOURCES_LIST,
   RESOURCES_LIST_ERROR,
+  ORDER_CREATE,
+  ORDER_ERROR,
 } from "./actions";
 
 import { CreateOfficeRequest, EmptyRequest } from "../proto/office_pb";
@@ -19,9 +21,12 @@ import {
   ResourcesListParams,
 } from "../proto/resource_pb";
 import { ResourceServiceClient } from "../proto/resource_grpc_web_pb";
+import { CreateOrderRequest, CreateOrderResponse } from "../proto/order_pb";
+import { OrderServiceClient } from "../proto/order_grpc_web_pb";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
 var resourceClient = new ResourceServiceClient("https://localhost:8080");
+var orderClient = new OrderServiceClient("https://localhost:8080");
 
 // Create context
 export const GlobalContext = createContext({});
@@ -218,6 +223,40 @@ export function createResource(officeId, name, description) {
     dispatch({
       type: "OFFICE_ERROR",
       payload: err.message,
+    });
+  }
+}
+
+export function book(people, minutes, officeID, resourceID) {
+  try {
+    var createOrderRequest = new CreateOrderRequest();
+    createOrderRequest.setMinutes(parseInt(minutes, 10));
+    createOrderRequest.setPeople(parseInt(people, 10));
+    createOrderRequest.setOfficeid(officeID);
+    createOrderRequest.setResourceid(resourceID);
+
+    orderClient.create(
+      createOrderRequest,
+      { authorization: "Bearer " + token },
+      function (err, resp) {
+        if (err != null) {
+          dispatch({
+            type: ORDER_ERROR,
+            payload: `GRPC error: ${err.message}`,
+          });
+          return;
+        }
+
+        dispatch({
+          type: ORDER_CREATE,
+          payload: resp.toObject(),
+        });
+      }
+    );
+  } catch (err) {
+    dispatch({
+      type: ORDER_ERROR,
+      payload: `Fatal error: ${err.message}`,
     });
   }
 }
