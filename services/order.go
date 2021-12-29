@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tomekwlod/grg/auth"
@@ -34,12 +35,14 @@ type OrderService struct {
 func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
 
 	if req.GetMinutes() <= 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "validation error; `minutes` parameter needs to be provided")
+		return nil, status.Errorf(codes.InvalidArgument, "validation error; `minutes` parameter needs to be provided and higher than zero")
 	}
 	if req.GetPeople() <= 0 {
-		return nil, status.Errorf(codes.InvalidArgument, "validation error; `people` parameter needs to be provided")
+		return nil, status.Errorf(codes.InvalidArgument, "validation error; `people` parameter needs to be provided and higher than zero")
 	}
-	// some other params check
+	if req.GetStartAt() <= 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "validation error; `startAt` parameter needs to be provided and higher than zero")
+	}
 
 	// getting UID from auth context
 	uid, ok := ctx.Value(auth.UIDFromClaim).(int64)
@@ -47,14 +50,17 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 		return nil, status.Errorf(codes.Unauthenticated, "context not authenticated")
 	}
 
+	var startAt time.Time
+	startAt = time.Unix(req.GetStartAt()/1000, 0)
+
 	order := core.Order{
 		OfficeID:   req.GetOfficeId(),
 		ResourceID: req.GetResourceId(),
-		UserID:     req.GetUserId(),
+		UserID:     uid,
 		Minutes:    req.GetMinutes(),
 		People:     req.GetPeople(),
 		CreatedBy:  uid,
-		// StartAt:    req.GetStartAt(),
+		StartAt:    &startAt,
 	}
 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {

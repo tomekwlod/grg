@@ -4,3 +4,4 @@ export { FormTextInput } from "./FormTextInput";
 export { FormSelector } from "./FormSelector";
 export { FormErrorBox } from "./FormErrorBox";
 export { FormTextArea } from "./FormTextArea";
+export { FormDatetimeInput } from "./FormDatetimeInput";

@@ -227,13 +227,14 @@ export function createResource(officeId, name, description) {
   }
 }
 
-export function book(people, minutes, officeID, resourceID) {
+export function book(people, minutes, officeID, resourceID, startAt) {
   try {
     var createOrderRequest = new CreateOrderRequest();
     createOrderRequest.setMinutes(parseInt(minutes, 10));
     createOrderRequest.setPeople(parseInt(people, 10));
     createOrderRequest.setOfficeid(officeID);
     createOrderRequest.setResourceid(resourceID);
+    createOrderRequest.setStartat(startAt);
 
     orderClient.create(
       createOrderRequest,

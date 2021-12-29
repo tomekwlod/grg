@@ -2,9 +2,12 @@ import React, { useEffect, useContext, useState } from "react";
 
 import { RootFront } from "../..";
 
+import moment from "moment";
+
 import {
   Box,
   FormSelectInput,
+  FormDatetimeInput,
   FormTextInput,
   ButtonPrimary,
 } from "../../../components";
@@ -22,6 +25,7 @@ export const Order = (props) => {
   useContext(GlobalContext);
 
   const [people, setPeople] = useState(1);
+  const [startAt, setStartAt] = useState(0);
   const [minutes, setMinutes] = useState(15);
   const [officeID, setOfficeID] = useState(0);
   const [resourceID, setResourceID] = useState(0);
@@ -36,9 +40,11 @@ export const Order = (props) => {
     }
   }, [officeID]);
 
-  const booking = (people, minutes, officeID, resourceID) => {
-    console.log("booking todo", people, minutes, officeID, resourceID);
-    book(people, minutes, officeID, resourceID);
+  const booking = (people, minutes, officeID, resourceID, startAt) => {
+    if (startAt <= 0) {
+      // dispatch error
+    }
+    book(people, minutes, officeID, resourceID, startAt);
   };
 
   return (
@@ -50,6 +56,20 @@ export const Order = (props) => {
           alignContent="space-around"
           flexDirection="column"
         >
+          <FormDatetimeInput
+            name="startAt"
+            label="Start At"
+            required={true}
+            variant="secondary"
+            initialValue="0"
+            value={startAt}
+            onChange={(e) => {
+              if (typeof e === "object" && typeof e.unix === "function") {
+                return setStartAt(e);
+              }
+              return setStartAt(0);
+            }}
+          />
           <FormSelectInput
             label="Offices"
             required={true}
@@ -101,7 +121,7 @@ export const Order = (props) => {
             onClick={(e) => {
               e.preventDefault();
 
-              booking(people, minutes, officeID, resourceID);
+              booking(people, minutes, officeID, resourceID, startAt);
             }}
           >
             Book

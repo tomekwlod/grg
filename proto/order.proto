@@ -9,7 +9,7 @@ message CreateOrderRequest {
   int64 userId = 3;
   int64 minutes = 4;
   int64 people = 5;
-  // int64 startAt = 6;
+  int64 startAt = 6;
 }
 message CreateOrderResponse {
   int64 id = 1;
@@ -18,7 +18,7 @@ message CreateOrderResponse {
   int64 userId = 4;
   int64 minutes = 5;
   int64 people = 6;
-  // int64 startAt = 7;
+  int64 startAt = 7;
 }
 
 service OrderService {
