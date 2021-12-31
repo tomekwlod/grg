@@ -131,5 +131,66 @@ proto.order.OrderServicePromiseClient.prototype.create =
 };
 
 
+/**
+ * @const
+ * @type {!grpc.web.MethodDescriptor<
+ *   !proto.order.UserOrderListRequest,
+ *   !proto.order.UserOrderListResponse>}
+ */
+const methodDescriptor_OrderService_UserOrderList = new grpc.web.MethodDescriptor(
+  '/order.OrderService/UserOrderList',
+  grpc.web.MethodType.UNARY,
+  proto.order.UserOrderListRequest,
+  proto.order.UserOrderListResponse,
+  /**
+   * @param {!proto.order.UserOrderListRequest} request
+   * @return {!Uint8Array}
+   */
+  function(request) {
+    return request.serializeBinary();
+  },
+  proto.order.UserOrderListResponse.deserializeBinary
+);
+
+
+/**
+ * @param {!proto.order.UserOrderListRequest} request The
+ *     request proto
+ * @param {?Object<string, string>} metadata User defined
+ *     call metadata
+ * @param {function(?grpc.web.RpcError, ?proto.order.UserOrderListResponse)}
+ *     callback The callback function(error, response)
+ * @return {!grpc.web.ClientReadableStream<!proto.order.UserOrderListResponse>|undefined}
+ *     The XHR Node Readable Stream
+ */
+proto.order.OrderServiceClient.prototype.userOrderList =
+    function(request, metadata, callback) {
+  return this.client_.rpcCall(this.hostname_ +
+      '/order.OrderService/UserOrderList',
+      request,
+      metadata || {},
+      methodDescriptor_OrderService_UserOrderList,
+      callback);
+};
+
+
+/**
+ * @param {!proto.order.UserOrderListRequest} request The
+ *     request proto
+ * @param {?Object<string, string>=} metadata User defined
+ *     call metadata
+ * @return {!Promise<!proto.order.UserOrderListResponse>}
+ *     Promise that resolves to the response
+ */
+proto.order.OrderServicePromiseClient.prototype.userOrderList =
+    function(request, metadata) {
+  return this.client_.unaryCall(this.hostname_ +
+      '/order.OrderService/UserOrderList',
+      request,
+      metadata || {},
+      methodDescriptor_OrderService_UserOrderList);
+};
+
+
 module.exports = proto.order;
 

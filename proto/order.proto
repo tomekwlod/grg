@@ -1,6 +1,9 @@
 syntax = "proto3";
-
 package order;
+
+// import "google/protobuf/timestamp.proto";
+// https://stackoverflow.com/questions/3574716/date-and-time-type-for-use-with-protobuf
+
 option go_package="/.;pb";
 
 message CreateOrderRequest {
@@ -21,6 +24,37 @@ message CreateOrderResponse {
   int64 startAt = 7;
 }
 
+message UserOrderListRequest {
+  // int64 userId = 1;
+}
+message UserOrderListResponse {
+  int64 id = 1;
+  
+  message User {
+    int64 id = 1;
+    string email = 2;
+  }
+  User user = 2;
+  
+  message Office {
+    int64 id = 1;
+    string name = 2;
+  }
+  Office office = 3;
+
+  message Resource {
+    int64 id = 1;
+    string name = 2;
+  }
+  Resource resource = 4;
+
+  int64 minutes = 5;
+  int64 people = 6;
+  // int64 startAt = 7;
+  // google.protobuf.Timestamp startAt = 7;
+}
+
 service OrderService {
   rpc Create(CreateOrderRequest) returns (CreateOrderResponse) {};
+  rpc UserOrderList(UserOrderListRequest) returns (UserOrderListResponse) {};
 }

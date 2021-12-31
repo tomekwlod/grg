@@ -11,6 +11,8 @@ import {
   RESOURCES_LIST_ERROR,
   ORDER_CREATE,
   ORDER_ERROR,
+  ORDER_LIST,
+  ORDER_LIST_ERROR,
 } from "./actions";
 
 const reducer = (state, action) => {
@@ -62,6 +64,17 @@ const reducer = (state, action) => {
         error: action.payload,
       };
     case ORDER_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case ORDER_LIST:
+      return {
+        ...state,
+        orders: action.payload,
+        error: "",
+      };
+    case ORDER_LIST_ERROR:
       return {
         ...state,
         error: action.payload,

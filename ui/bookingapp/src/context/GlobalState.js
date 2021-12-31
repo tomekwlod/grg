@@ -11,6 +11,8 @@ import {
   RESOURCES_LIST,
   RESOURCES_LIST_ERROR,
   ORDER_CREATE,
+  ORDER_LIST,
+  ORDER_LIST_ERROR,
   ORDER_ERROR,
 } from "./actions";
 
@@ -21,7 +23,12 @@ import {
   ResourcesListParams,
 } from "../proto/resource_pb";
 import { ResourceServiceClient } from "../proto/resource_grpc_web_pb";
-import { CreateOrderRequest, CreateOrderResponse } from "../proto/order_pb";
+import {
+  CreateOrderRequest,
+  CreateOrderResponse,
+  UserOrderListRequest,
+  UserOrderListResponse,
+} from "../proto/order_pb";
 import { OrderServiceClient } from "../proto/order_grpc_web_pb";
 
 var officeClient = new OfficeServiceClient("https://localhost:8080");
@@ -43,6 +50,7 @@ export const GlobalProvider = ({ children }) => {
     office: {},
     offices: [],
     resources: [],
+    orders: [],
     error: "",
   });
 
@@ -258,6 +266,38 @@ export function book(people, minutes, officeID, resourceID, startAt) {
     dispatch({
       type: ORDER_ERROR,
       payload: `Fatal error: ${err.message}`,
+    });
+  }
+}
+
+export function getUserOrderList(officeId) {
+  try {
+    var listParams = new UserOrderListRequest();
+    console.log(9898);
+    orderClient.list(
+      listParams,
+      { authorization: "Bearer " + token },
+      function (err, resp) {
+        if (err != null) {
+          dispatch({
+            type: ORDER_LIST_ERROR,
+            payload: err.message,
+          });
+          return;
+        }
+
+        const obj = resp.toObject();
+        console.log(999, obj);
+        dispatch({
+          type: ORDER_LIST,
+          payload: obj.ordersList,
+        });
+      }
+    );
+  } catch (err) {
+    dispatch({
+      type: ORDER_LIST_ERROR,
+      payload: err.message,
     });
   }
 }
