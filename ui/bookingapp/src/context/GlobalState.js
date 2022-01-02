@@ -52,6 +52,7 @@ export const GlobalProvider = ({ children }) => {
     resources: [],
     orders: [],
     error: "",
+    error_order_list: "",
   });
 
   [token, setToken] = useState("");
@@ -274,7 +275,7 @@ export function getUserOrderList(officeId) {
   try {
     var listParams = new UserOrderListRequest();
     console.log(9898);
-    orderClient.list(
+    orderClient.userOrderList(
       listParams,
       { authorization: "Bearer " + token },
       function (err, resp) {
@@ -287,7 +288,7 @@ export function getUserOrderList(officeId) {
         }
 
         const obj = resp.toObject();
-        console.log(999, obj);
+        console.log("ooo", obj);
         dispatch({
           type: ORDER_LIST,
           payload: obj.ordersList,

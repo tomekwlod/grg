@@ -72,16 +72,17 @@ const reducer = (state, action) => {
       return {
         ...state,
         orders: action.payload,
-        error: "",
+        error_order_list: "",
       };
     case ORDER_LIST_ERROR:
       return {
         ...state,
-        error: action.payload,
+        error_order_list: action.payload,
       };
     case ORDER_CREATE:
       return {
         ...state,
+        // orders: [...state.orders, action.payload],
         error: "",
       };
     default:

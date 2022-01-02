@@ -27,7 +27,7 @@ message CreateOrderResponse {
 message UserOrderListRequest {
   // int64 userId = 1;
 }
-message UserOrderListResponse {
+message Order {
   int64 id = 1;
   
   message User {
@@ -52,6 +52,9 @@ message UserOrderListResponse {
   int64 people = 6;
   // int64 startAt = 7;
   // google.protobuf.Timestamp startAt = 7;
+}
+message UserOrderListResponse {
+  repeated Order orders = 1;
 }
 
 service OrderService {

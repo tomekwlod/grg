@@ -64,7 +64,15 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 	}
 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
-		return orderstore.New(tx).Create(ctx, &order)
+		store := orderstore.New(tx)
+
+		err = store.Create(ctx, &order)
+
+		if err != nil {
+			return err
+		}
+
+		return
 	})
 
 	if err != nil {
@@ -80,4 +88,43 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 	}
 
 	return &pb.CreateOrderResponse{Id: order.ID, OfficeId: order.OfficeID, ResourceId: order.ResourceID, UserId: order.UserID, Minutes: order.Minutes, People: order.People, StartAt: 0}, nil
+}
+
+func (as *OrderService) UserOrderList(ctx context.Context, req *pb.UserOrderListRequest) (*pb.UserOrderListResponse, error) {
+
+	// getting UID from auth context
+	uid, ok := ctx.Value(auth.UIDFromClaim).(int64)
+	if !ok && uid <= 0 {
+		return nil, status.Errorf(codes.Unauthenticated, "context not authenticated")
+	}
+
+	res, err := orderstore.New(as.db).FindForUser(ctx, uid)
+
+	if err != nil {
+		status.Errorf(codes.Internal, err.Error())
+	}
+	list := pb.UserOrderListResponse{}
+
+	for _, o := range res {
+
+		list.Orders = append(list.Orders, &pb.Order{
+			Id:      o.OrderID,
+			Minutes: o.Minutes,
+			People:  o.People,
+			Office: &pb.Order_Office{
+				Id:   o.OfficeID,
+				Name: o.OfficeName,
+			},
+			Resource: &pb.Order_Resource{
+				Id:   o.ResourceID,
+				Name: o.ResourceName,
+			},
+			User: &pb.Order_User{
+				Id:    o.UserID,
+				Email: o.UserEmail,
+			},
+		})
+	}
+
+	return &list, nil
 }

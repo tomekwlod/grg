@@ -14,8 +14,7 @@ export const UserOrderList = (props) => {
   useContext(GlobalContext);
 
   useEffect(() => {
-    console.log(888777);
-    // getUserOrderList();
+    getUserOrderList();
   }, [token]);
 
   return (
@@ -25,24 +24,30 @@ export const UserOrderList = (props) => {
         <thead>
           <tr>
             <th scope="col">Office name</th>
-            <th scope="col">People p/d</th>
-            <th scope="col">Resources</th>
+            <th scope="col">Resource name</th>
+            <th scope="col">People</th>
+            <th scope="col">Minutes</th>
+            <th scope="col">actions</th>
           </tr>
         </thead>
         <tbody>
-          {state.orders.map((office) => {
+          {state.orders.map((order) => {
             return (
-              <tr key={office.id}>
+              <tr key={order.id}>
                 <td>
-                  <BlockText>
-                    <Link to={{ pathname: `${office.id}` }}>{office.name}</Link>
-                  </BlockText>
+                  <BlockText>{order.office.name}</BlockText>
                 </td>
                 <td>
-                  <BlockText>{office.maxpeopleperday}</BlockText>
+                  <BlockText>{order.resource.name}</BlockText>
                 </td>
                 <td>
-                  <BlockText>{office.resourcescount}</BlockText>
+                  <BlockText>{order.people}</BlockText>
+                </td>
+                <td>
+                  <BlockText>{order.minutes}</BlockText>
+                </td>
+                <td>
+                  <Link to={{ pathname: `${order.id}` }}>delete</Link>
                 </td>
               </tr>
             );
@@ -50,7 +55,7 @@ export const UserOrderList = (props) => {
         </tbody>
       </table>
 
-      <div className="errors">{state.error}</div>
+      <div className="errors">{state.error_order_list}</div>
     </Box>
   );
 };

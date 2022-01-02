@@ -2,6 +2,7 @@ package resource
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/db"
@@ -27,11 +28,11 @@ func (r *orderStore) Create(ctx context.Context, order *core.Order) error {
 
 func (r *orderStore) FindForUser(ctx context.Context, userId int64) ([]*core.OrderList, error) {
 	rows, err := r.db.QueryxContext(ctx, `
-SELECT o.id as orderId, o.minutes, o.people, o.start_at,
-	of.id as officeId, of.name as office_name, 
-	r.id as resourceId, r.name as resource_name, 
-	u.id as userId, u.email
-FROM order o
+SELECT o.id as order_id, o.minutes, o.people, o.start_at,
+	of.id as office_id, of.name as office_name, 
+	r.id as resource_id, r.name as resource_name, 
+	u.id as user_id, u.email
+FROM "order" o
 left join users u on (u.id = o.user_id)
 left join resource r on (r.id = o.resource_id)
 left join office of on (of.id = o.office_id)
@@ -49,7 +50,12 @@ ORDER BY o.start_at DESC`, userId)
 	for rows.Next() {
 		row := new(core.OrderList)
 
-		rows.StructScan(row)
+		err := rows.StructScan(row)
+
+		if err != nil {
+			// hmmm how to log this error??
+			fmt.Println(err)
+		}
 
 		list = append(list, row)
 	}
