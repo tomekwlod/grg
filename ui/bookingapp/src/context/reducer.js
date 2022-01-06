@@ -82,7 +82,7 @@ const reducer = (state, action) => {
     case ORDER_CREATE:
       return {
         ...state,
-        // orders: [...state.orders, action.payload],
+        orders: [...state.orders, action.payload],
         error: "",
       };
     default:

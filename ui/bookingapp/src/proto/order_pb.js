@@ -1745,7 +1745,10 @@ proto.order.UserOrderListResponse.prototype.toObject = function(opt_includeInsta
 proto.order.UserOrderListResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
     ordersList: jspb.Message.toObjectList(msg.getOrdersList(),
-    proto.order.Order.toObject, includeInstance)
+    proto.order.Order.toObject, includeInstance),
+    count: jspb.Message.getFieldWithDefault(msg, 2, 0),
+    page: jspb.Message.getFieldWithDefault(msg, 3, 0),
+    perpage: jspb.Message.getFieldWithDefault(msg, 4, 0)
   };
 
   if (includeInstance) {
@@ -1787,6 +1790,18 @@ proto.order.UserOrderListResponse.deserializeBinaryFromReader = function(msg, re
       reader.readMessage(value,proto.order.Order.deserializeBinaryFromReader);
       msg.addOrders(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setCount(value);
+      break;
+    case 3:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPage(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPerpage(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1822,6 +1837,27 @@ proto.order.UserOrderListResponse.serializeBinaryToWriter = function(message, wr
       1,
       f,
       proto.order.Order.serializeBinaryToWriter
+    );
+  }
+  f = message.getCount();
+  if (f !== 0) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = message.getPage();
+  if (f !== 0) {
+    writer.writeInt64(
+      3,
+      f
+    );
+  }
+  f = message.getPerpage();
+  if (f !== 0) {
+    writer.writeInt64(
+      4,
+      f
     );
   }
 };
@@ -1862,6 +1898,60 @@ proto.order.UserOrderListResponse.prototype.addOrders = function(opt_value, opt_
  */
 proto.order.UserOrderListResponse.prototype.clearOrdersList = function() {
   return this.setOrdersList([]);
+};
+
+
+/**
+ * optional int64 count = 2;
+ * @return {number}
+ */
+proto.order.UserOrderListResponse.prototype.getCount = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.order.UserOrderListResponse} returns this
+ */
+proto.order.UserOrderListResponse.prototype.setCount = function(value) {
+  return jspb.Message.setProto3IntField(this, 2, value);
+};
+
+
+/**
+ * optional int64 page = 3;
+ * @return {number}
+ */
+proto.order.UserOrderListResponse.prototype.getPage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 3, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.order.UserOrderListResponse} returns this
+ */
+proto.order.UserOrderListResponse.prototype.setPage = function(value) {
+  return jspb.Message.setProto3IntField(this, 3, value);
+};
+
+
+/**
+ * optional int64 perpage = 4;
+ * @return {number}
+ */
+proto.order.UserOrderListResponse.prototype.getPerpage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.order.UserOrderListResponse} returns this
+ */
+proto.order.UserOrderListResponse.prototype.setPerpage = function(value) {
+  return jspb.Message.setProto3IntField(this, 4, value);
 };
 
 

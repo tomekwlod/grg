@@ -32,7 +32,7 @@ type OrderService struct {
 // 	return ctx, nil
 // }
 
-func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) (*pb.CreateOrderResponse, error) {
+func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) (*pb.Order, error) {
 
 	if req.GetMinutes() <= 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "validation error; `minutes` parameter needs to be provided and higher than zero")
@@ -53,7 +53,9 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 	var startAt time.Time
 	startAt = time.Unix(req.GetStartAt()/1000, 0)
 
-	order := core.Order{
+	var order *core.Order
+
+	newOrder := core.Order{
 		OfficeID:   req.GetOfficeId(),
 		ResourceID: req.GetResourceId(),
 		UserID:     uid,
@@ -66,7 +68,13 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 	err := as.db.Transact(func(tx *sqlx.Tx) (err error) {
 		store := orderstore.New(tx)
 
-		err = store.Create(ctx, &order)
+		err = store.Create(ctx, &newOrder)
+
+		if err != nil {
+			return err
+		}
+
+		order, err = store.FindOne(ctx, newOrder.ID)
 
 		if err != nil {
 			return err
@@ -87,7 +95,23 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 		return nil, status.Errorf(codes.Internal, "couldn't create a new booking, %s", errorMessage)
 	}
 
-	return &pb.CreateOrderResponse{Id: order.ID, OfficeId: order.OfficeID, ResourceId: order.ResourceID, UserId: order.UserID, Minutes: order.Minutes, People: order.People, StartAt: 0}, nil
+	return &pb.Order{
+		Id:      order.ID,
+		Minutes: order.Minutes,
+		People:  order.People,
+		Office: &pb.Order_Office{
+			Id:   order.OfficeID,
+			Name: order.OfficeName,
+		},
+		Resource: &pb.Order_Resource{
+			Id:   order.ResourceID,
+			Name: order.ResourceName,
+		},
+		User: &pb.Order_User{
+			Id:    order.UserID,
+			Email: order.UserEmail,
+		},
+	}, nil
 }
 
 func (as *OrderService) UserOrderList(ctx context.Context, req *pb.UserOrderListRequest) (*pb.UserOrderListResponse, error) {
@@ -105,23 +129,23 @@ func (as *OrderService) UserOrderList(ctx context.Context, req *pb.UserOrderList
 	}
 	list := pb.UserOrderListResponse{}
 
-	for _, o := range res {
+	for _, order := range res.Orders {
 
 		list.Orders = append(list.Orders, &pb.Order{
-			Id:      o.OrderID,
-			Minutes: o.Minutes,
-			People:  o.People,
+			Id:      order.ID,
+			Minutes: order.Minutes,
+			People:  order.People,
 			Office: &pb.Order_Office{
-				Id:   o.OfficeID,
-				Name: o.OfficeName,
+				Id:   order.OfficeID,
+				Name: order.OfficeName,
 			},
 			Resource: &pb.Order_Resource{
-				Id:   o.ResourceID,
-				Name: o.ResourceName,
+				Id:   order.ResourceID,
+				Name: order.ResourceName,
 			},
 			User: &pb.Order_User{
-				Id:    o.UserID,
-				Email: o.UserEmail,
+				Id:    order.UserID,
+				Email: order.UserEmail,
 			},
 		})
 	}

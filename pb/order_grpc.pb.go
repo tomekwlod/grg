@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderServiceClient interface {
-	Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error)
+	Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error)
 	UserOrderList(ctx context.Context, in *UserOrderListRequest, opts ...grpc.CallOption) (*UserOrderListResponse, error)
 }
 
@@ -30,8 +30,8 @@ func NewOrderServiceClient(cc grpc.ClientConnInterface) OrderServiceClient {
 	return &orderServiceClient{cc}
 }
 
-func (c *orderServiceClient) Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*CreateOrderResponse, error) {
-	out := new(CreateOrderResponse)
+func (c *orderServiceClient) Create(ctx context.Context, in *CreateOrderRequest, opts ...grpc.CallOption) (*Order, error) {
+	out := new(Order)
 	err := c.cc.Invoke(ctx, "/order.OrderService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func (c *orderServiceClient) UserOrderList(ctx context.Context, in *UserOrderLis
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility
 type OrderServiceServer interface {
-	Create(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error)
+	Create(context.Context, *CreateOrderRequest) (*Order, error)
 	UserOrderList(context.Context, *UserOrderListRequest) (*UserOrderListResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
@@ -61,7 +61,7 @@ type OrderServiceServer interface {
 type UnimplementedOrderServiceServer struct {
 }
 
-func (UnimplementedOrderServiceServer) Create(context.Context, *CreateOrderRequest) (*CreateOrderResponse, error) {
+func (UnimplementedOrderServiceServer) Create(context.Context, *CreateOrderRequest) (*Order, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedOrderServiceServer) UserOrderList(context.Context, *UserOrderListRequest) (*UserOrderListResponse, error) {

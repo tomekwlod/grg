@@ -55,9 +55,12 @@ message Order {
 }
 message UserOrderListResponse {
   repeated Order orders = 1;
+  int64 count = 2;
+  int64 page = 3;
+  int64 perpage = 4;
 }
 
 service OrderService {
-  rpc Create(CreateOrderRequest) returns (CreateOrderResponse) {};
+  rpc Create(CreateOrderRequest) returns (Order) {};
   rpc UserOrderList(UserOrderListRequest) returns (UserOrderListResponse) {};
 }

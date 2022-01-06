@@ -74,13 +74,13 @@ proto.order.OrderServicePromiseClient =
  * @const
  * @type {!grpc.web.MethodDescriptor<
  *   !proto.order.CreateOrderRequest,
- *   !proto.order.CreateOrderResponse>}
+ *   !proto.order.Order>}
  */
 const methodDescriptor_OrderService_Create = new grpc.web.MethodDescriptor(
   '/order.OrderService/Create',
   grpc.web.MethodType.UNARY,
   proto.order.CreateOrderRequest,
-  proto.order.CreateOrderResponse,
+  proto.order.Order,
   /**
    * @param {!proto.order.CreateOrderRequest} request
    * @return {!Uint8Array}
@@ -88,7 +88,7 @@ const methodDescriptor_OrderService_Create = new grpc.web.MethodDescriptor(
   function(request) {
     return request.serializeBinary();
   },
-  proto.order.CreateOrderResponse.deserializeBinary
+  proto.order.Order.deserializeBinary
 );
 
 
@@ -97,9 +97,9 @@ const methodDescriptor_OrderService_Create = new grpc.web.MethodDescriptor(
  *     request proto
  * @param {?Object<string, string>} metadata User defined
  *     call metadata
- * @param {function(?grpc.web.RpcError, ?proto.order.CreateOrderResponse)}
+ * @param {function(?grpc.web.RpcError, ?proto.order.Order)}
  *     callback The callback function(error, response)
- * @return {!grpc.web.ClientReadableStream<!proto.order.CreateOrderResponse>|undefined}
+ * @return {!grpc.web.ClientReadableStream<!proto.order.Order>|undefined}
  *     The XHR Node Readable Stream
  */
 proto.order.OrderServiceClient.prototype.create =
@@ -118,7 +118,7 @@ proto.order.OrderServiceClient.prototype.create =
  *     request proto
  * @param {?Object<string, string>=} metadata User defined
  *     call metadata
- * @return {!Promise<!proto.order.CreateOrderResponse>}
+ * @return {!Promise<!proto.order.Order>}
  *     Promise that resolves to the response
  */
 proto.order.OrderServicePromiseClient.prototype.create =
