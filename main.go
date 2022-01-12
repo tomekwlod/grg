@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/joho/godotenv"
+	"github.com/streadway/amqp"
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/db"
 	"github.com/tomekwlod/grg/pb"
@@ -55,6 +56,31 @@ func main() {
 	}
 	defer dbConn.Close()
 
+	// Define RabbitMQ server URL.
+	amqpServerURL := os.Getenv("AMQP_SERVER_URL")
+	// Create a new RabbitMQ connection.
+	connectRabbitMQ, err := amqp.Dial(amqpServerURL)
+	if err != nil {
+		log.Fatalf("error while connecting to rabbitmq %v", err)
+	}
+	defer connectRabbitMQ.Close()
+	channelRabbitMQ, err := connectRabbitMQ.Channel()
+	if err != nil {
+		log.Fatalf("error while creating rabbitmq channel %v", err)
+	}
+	defer channelRabbitMQ.Close()
+	_, err = channelRabbitMQ.QueueDeclare(
+		"Login", // queue name
+		true,    // durable
+		false,   // auto delete
+		false,   // exclusive
+		false,   // no wait
+		nil,     // arguments
+	)
+	if err != nil {
+		log.Fatalf("error while declaring rabbitmq queue to db %v", err)
+	}
+
 	// initialize the auth interceptor/middleware
 	ath := auth.NewAuth(secret)
 
@@ -70,7 +96,7 @@ func main() {
 	// The register function is a generated piece by protoc.
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
-	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath))
+	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath, channelRabbitMQ))
 	pb.RegisterOfficeServiceServer(apiServer, services.NewOfficeService(dbConn))
 	pb.RegisterResourceServiceServer(apiServer, services.NewResourceService(dbConn))
 	pb.RegisterOrderServiceServer(apiServer, services.NewOrderService(dbConn))

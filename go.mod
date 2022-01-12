@@ -15,6 +15,7 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/mackerelio/go-osstat v0.2.1
 	github.com/rs/cors v1.8.0 // indirect
+	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/tomekwlod/utils v0.0.0-20210516215220-b2b82d6194fc
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f // indirect

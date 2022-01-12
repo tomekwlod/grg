@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/streadway/amqp"
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/db"
@@ -16,15 +17,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func NewAuthService(db *db.DB, ath *auth.Auth) *AuthService {
-	return &AuthService{db: db, auth: ath}
+func NewAuthService(db *db.DB, ath *auth.Auth, rmqChan *amqp.Channel) *AuthService {
+	return &AuthService{db: db, auth: ath, rmqChan: rmqChan}
 }
 
 // implements methods that are intercepted by AuthFunc - only authenticated access!
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
-	db   *db.DB
-	auth *auth.Auth
+	db      *db.DB
+	auth    *auth.Auth
+	rmqChan *amqp.Channel
 }
 
 // This is to allow unauthenticated access!
@@ -90,6 +92,24 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 
 	// md := metadata.New(map[string]string{"Set-Cookie": fmt.Sprintf("jwt=%s; Path=/; HttpOnly", token)})
 	// grpc.SendHeader(ctx, md)
+
+	message := amqp.Publishing{
+		ContentType: "text/plain",
+		// ContentType: "application/json",
+		Body: []byte(fmt.Sprintf("User %s logged in", user.Email)),
+	}
+
+	// Attempt to publish a message to the queue.
+	if err := as.rmqChan.Publish(
+		"",      // exchange
+		"Login", // queue name
+		false,   // mandatory
+		false,   // immediate
+		message, // message to publish
+	); err != nil {
+		log.Printf("error while sending message to rabbitmq channel %v", err)
+		// return err
+	}
 
 	return &pb.LoginResponse{Token: token}, nil
 }
