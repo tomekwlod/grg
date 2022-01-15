@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/rmq"
 	"github.com/tomekwlod/grg/pb"
 	userstore "github.com/tomekwlod/grg/store/user"
 	"google.golang.org/grpc/codes"
@@ -93,16 +95,28 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	// md := metadata.New(map[string]string{"Set-Cookie": fmt.Sprintf("jwt=%s; Path=/; HttpOnly", token)})
 	// grpc.SendHeader(ctx, md)
 
+	emailMessage := rmq.AuthEmailMessage{
+		To:      []string{"admin@email.com", user.Email},
+		Subject: "User logged in",
+		Body:    fmt.Sprintf("A user with email address %s logged in", user.Email),
+	}
+
+	bodyJson, err := json.Marshal(emailMessage)
+
+	if err != nil {
+		log.Printf("%v", err)
+		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
+	}
+
 	message := amqp.Publishing{
 		ContentType: "text/plain",
-		// ContentType: "application/json",
-		Body: []byte(fmt.Sprintf("User %s logged in", user.Email)),
+		Body:        bodyJson,
 	}
 
 	// Attempt to publish a message to the queue.
 	if err := as.rmqChan.Publish(
 		"",      // exchange
-		"Login", // queue name
+		"auth",  // queue name
 		false,   // mandatory
 		false,   // immediate
 		message, // message to publish
@@ -150,6 +164,36 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 			errorMessage = "user already exists"
 		}
 		return nil, status.Errorf(codes.Internal, "couldn't create a new user, %s", errorMessage)
+	}
+
+	emailMessage := rmq.AuthEmailMessage{
+		To:      []string{"admin@email.com", user.Email},
+		Subject: "New user has arrived",
+		Body:    fmt.Sprintf("A new user registered with email: %s", user.Email),
+	}
+
+	bodyJson, err := json.Marshal(emailMessage)
+
+	if err != nil {
+		log.Printf("%v", err)
+		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
+	}
+
+	message := amqp.Publishing{
+		ContentType: "text/plain",
+		Body:        bodyJson,
+	}
+
+	// Attempt to publish a message to the queue.
+	if err := as.rmqChan.Publish(
+		"",              // exchange
+		"auth.register", // queue name
+		false,           // mandatory
+		false,           // immediate
+		message,         // message to publish
+	); err != nil {
+		log.Printf("error while sending message to rabbitmq channel %v", err)
+		// return err
 	}
 
 	return &pb.RegisterResponse{Id: user.ID, Email: user.Email}, nil

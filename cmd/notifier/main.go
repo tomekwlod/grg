@@ -1,13 +1,15 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/streadway/amqp"
+	"github.com/tomekwlod/grg/internal/rmq"
 	notifier "github.com/tomekwlod/grg/libs/notifier"
+	"github.com/tomekwlod/utils/env"
 )
 
 var (
@@ -66,43 +68,55 @@ func main() {
 		os.Exit(2)
 	}
 
-	// Create a new RabbitMQ connection.
-	connectRabbitMQ, err := amqp.Dial(amqpURL)
+	amqpChannel, close, err := rmq.OpenChannel(env.Env("AMQP_SERVER_URL", "amqp://user:pass@127.0.0.1:5672"))
 	if err != nil {
-		fmt.Println("Couldn't connect to RabbitMQ")
-		os.Exit(2)
+		if close != nil {
+			// when connections is established but the channel cannot be opened
+			close()
+		}
+		log.Fatal(err)
 	}
-	defer connectRabbitMQ.Close()
-	// Opening a channel to our RabbitMQ instance over
-	// the connection we have already established.
-	channelRabbitMQ, err := connectRabbitMQ.Channel()
+	defer close()
+
+	err = amqpChannel.DeclareQueues()
+
 	if err != nil {
-		fmt.Println("Couldn't connect to RabbitMQ channel")
-		os.Exit(2)
+		log.Fatalf("error while declaring rabbitmq queues to db %v", err)
 	}
-	defer channelRabbitMQ.Close()
+
 	// Subscribing to Login queue for getting messages
-	messages, err := channelRabbitMQ.Consume(
-		"Login", // queue name
-		"",      // consumer
-		true,    // auto-ack
-		false,   // exclusive
-		false,   // no local
-		false,   // no wait
-		nil,     // arguments
+	messages, err := amqpChannel.Consume(
+		"auth", // queue name
+		"",     // consumer
+		true,   // auto-ack
+		false,  // exclusive
+		false,  // no local
+		false,  // no wait
+		nil,    // arguments
 	)
+
 	if err != nil {
 		log.Println(err)
 	}
+
 	// Build a welcome message.
 	log.Println("Successfully connected to RabbitMQ")
 	log.Println("Waiting for messages")
+
 	// Make a channel to receive messages into infinite loop.
 	forever := make(chan bool)
 	go func() {
 		for message := range messages {
+			msg := &rmq.AuthEmailMessage{}
+
+			err := json.Unmarshal(message.Body, msg)
+
+			if err != nil {
+				log.Printf("Error decoding JSON: %s", err)
+			}
+
 			// For example, show received message in a console.
-			log.Printf(" > Received message: %s\n", message.Body)
+			log.Printf(" > Received message: %+v\n", msg)
 		}
 	}()
 	<-forever
