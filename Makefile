@@ -46,5 +46,6 @@ gocov:
 
 .PHONY: \
 	cert \
+	docker \
 	protogen \
 	run

@@ -2,9 +2,26 @@ version: '3.1'
 
 services:
 
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:3.8-management-alpine
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ../docker_data/grg/rabbitmq/data/:/var/lib/rabbitmq/
+      - ../docker_data/grg/rabbitmq/logs/:/var/log/rabbitmq/
+      # may be needed to set 777 to rabbitmq folder
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=myuser
+      - RABBITMQ_DEFAULT_PASS=mypassword
+    #user: rabbitmq
+    networks:
+      - grg-network
   postgres:
     container_name: postgres
-    image: postgres:9.6.20
+    image: postgres:9.6.24
     restart: unless-stopped
     ports: 
       - 5432:5432
@@ -12,26 +29,26 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
     volumes:
-       - ../docker_data/grg:/var/lib/postgresql/data
+       - ../docker_data/grg/postgres:/var/lib/postgresql/data
        - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - postgres
+      - grg-network
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:4.30
+    image: dpage/pgadmin4:6.4
     environment:
       PGADMIN_DEFAULT_EMAIL: "twl@phase-ii.com"
       PGADMIN_DEFAULT_PASSWORD: "password"
     volumes:
-       - ../docker_data/.pgadmin:/root/.pgadmin
-       - ../docker_data/pgadmin:/var/lib/pgadmin
+       - ../docker_data/grg/.pgadmin:/root/.pgadmin
+       - ../docker_data/grg/pgadmin:/var/lib/pgadmin
     ports:
       - "5050:80"
     networks:
-      - postgres
+      - grg-network
     restart: unless-stopped
 
 networks:
-  postgres:
+  grg-network:
     driver: bridge

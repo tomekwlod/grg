@@ -184,13 +184,17 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 		Body:        bodyJson,
 	}
 
+	// as well as the message above we would need such things as:
+	// - from where the message is being sent (domain? hostname?)
+	// - ip of the sender?
+
 	// Attempt to publish a message to the queue.
 	if err := as.rmqChan.Publish(
-		"",              // exchange
-		"auth.register", // queue name
-		false,           // mandatory
-		false,           // immediate
-		message,         // message to publish
+		"",      // exchange
+		"auth",  // queue name
+		false,   // mandatory
+		false,   // immediate
+		message, // message to publish
 	); err != nil {
 		log.Printf("error while sending message to rabbitmq channel %v", err)
 		// return err
