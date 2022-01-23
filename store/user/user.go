@@ -5,7 +5,7 @@ import (
 
 	// _ "github.com/jackc/pgx/stdlib"
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	rolestore "github.com/tomekwlod/grg/store/role"
 )
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/pb"
 	pingstore "github.com/tomekwlod/grg/store/ping"
 )

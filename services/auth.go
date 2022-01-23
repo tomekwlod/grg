@@ -8,10 +8,9 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/streadway/amqp"
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/internal/rmq"
 	"github.com/tomekwlod/grg/pb"
 	userstore "github.com/tomekwlod/grg/store/user"
@@ -19,16 +18,16 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func NewAuthService(db *db.DB, ath *auth.Auth, rmqChan *amqp.Channel) *AuthService {
-	return &AuthService{db: db, auth: ath, rmqChan: rmqChan}
+func NewAuthService(db *db.DB, ath *auth.Auth, rmq *rmq.Conn) *AuthService {
+	return &AuthService{db: db, auth: ath, rmq: rmq}
 }
 
 // implements methods that are intercepted by AuthFunc - only authenticated access!
 type AuthService struct {
 	pb.UnimplementedAuthServiceServer
-	db      *db.DB
-	auth    *auth.Auth
-	rmqChan *amqp.Channel
+	db   *db.DB
+	auth *auth.Auth
+	rmq  *rmq.Conn
 }
 
 // This is to allow unauthenticated access!
@@ -95,10 +94,9 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 	// md := metadata.New(map[string]string{"Set-Cookie": fmt.Sprintf("jwt=%s; Path=/; HttpOnly", token)})
 	// grpc.SendHeader(ctx, md)
 
-	emailMessage := rmq.AuthEmailMessage{
-		To:      []string{"admin@email.com", user.Email},
-		Subject: "User logged in",
-		Body:    fmt.Sprintf("A user with email address %s logged in", user.Email),
+	emailMessage := rmq.AuthMessage{
+		Email:    user.Email,
+		Template: "registration",
 	}
 
 	bodyJson, err := json.Marshal(emailMessage)
@@ -108,19 +106,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
 	}
 
-	message := amqp.Publishing{
-		ContentType: "text/plain",
-		Body:        bodyJson,
-	}
-
-	// Attempt to publish a message to the queue.
-	if err := as.rmqChan.Publish(
-		"",      // exchange
-		"auth",  // queue name
-		false,   // mandatory
-		false,   // immediate
-		message, // message to publish
-	); err != nil {
+	if err = as.rmq.PublishMessage("auth", bodyJson); err != nil {
 		log.Printf("error while sending message to rabbitmq channel %v", err)
 		// return err
 	}
@@ -166,10 +152,9 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 		return nil, status.Errorf(codes.Internal, "couldn't create a new user, %s", errorMessage)
 	}
 
-	emailMessage := rmq.AuthEmailMessage{
-		To:      []string{"admin@email.com", user.Email},
-		Subject: "New user has arrived",
-		Body:    fmt.Sprintf("A new user registered with email: %s", user.Email),
+	emailMessage := rmq.AuthMessage{
+		Email:    user.Email,
+		Template: "login",
 	}
 
 	bodyJson, err := json.Marshal(emailMessage)
@@ -179,23 +164,7 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
 	}
 
-	message := amqp.Publishing{
-		ContentType: "text/plain",
-		Body:        bodyJson,
-	}
-
-	// as well as the message above we would need such things as:
-	// - from where the message is being sent (domain? hostname?)
-	// - ip of the sender?
-
-	// Attempt to publish a message to the queue.
-	if err := as.rmqChan.Publish(
-		"",      // exchange
-		"auth",  // queue name
-		false,   // mandatory
-		false,   // immediate
-		message, // message to publish
-	); err != nil {
+	if err = as.rmq.PublishMessage("auth", bodyJson); err != nil {
 		log.Printf("error while sending message to rabbitmq channel %v", err)
 		// return err
 	}

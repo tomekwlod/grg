@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 )
 
 func New(db db.Dber) core.OrderStore {

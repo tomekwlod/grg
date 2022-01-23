@@ -6,11 +6,10 @@ import (
 	"github.com/streadway/amqp"
 )
 
-type AuthEmailMessage struct {
-	To      []string
-	BCC     []string
-	Subject string
-	Body    string
+type AuthMessage struct {
+	Email    string
+	Fullname string
+	Template string // it can be login, registration, forgot password, etc
 }
 
 type Conn struct {
@@ -39,6 +38,28 @@ func (c *Conn) DeclareQueues() error {
 	// 	false,           // no wait
 	// 	nil,             // arguments
 	// )
+
+	return err
+}
+
+func (c *Conn) PublishMessage(queueName string, msg []byte) error {
+	message := amqp.Publishing{
+		ContentType: "text/plain",
+		Body:        msg,
+	}
+
+	// as well as the message above we would need such things as:
+	// - from where the message is being sent (domain? hostname?)
+	// - ip of the sender?
+
+	// Attempt to publish a message to the queue.
+	err := c.Publish(
+		"",        // exchange
+		queueName, // queue name
+		false,     // mandatory
+		false,     // immediate
+		message,   // message to publish
+	)
 
 	return err
 }

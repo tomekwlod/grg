@@ -8,7 +8,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/pb"
 	officestore "github.com/tomekwlod/grg/store/office"
 	"google.golang.org/grpc/codes"

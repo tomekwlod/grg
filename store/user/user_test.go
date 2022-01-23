@@ -12,7 +12,7 @@ import (
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/joho/godotenv"
 	"github.com/tomekwlod/grg/core"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/utils/env"
 )
 

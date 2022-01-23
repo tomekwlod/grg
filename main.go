@@ -12,7 +12,7 @@ import (
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/joho/godotenv"
 	"github.com/tomekwlod/grg/auth"
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/internal/rmq"
 	"github.com/tomekwlod/grg/pb"
 	"github.com/tomekwlod/grg/services"
@@ -56,7 +56,7 @@ func main() {
 	}
 	defer dbConn.Close()
 
-	amqpChannel, close, err := rmq.OpenChannel(env.Env("AMQP_SERVER_URL", "amqp://user:pass@127.0.0.1:5672"))
+	rmqConn, close, err := rmq.OpenChannel(env.Env("AMQP_SERVER_URL", "amqp://user:pass@127.0.0.1:5672"))
 	if err != nil {
 		if close != nil {
 			// when connections is established but the channel cannot be opened
@@ -66,7 +66,7 @@ func main() {
 	}
 	defer close()
 
-	err = amqpChannel.DeclareQueues()
+	err = rmqConn.DeclareQueues()
 
 	if err != nil {
 		log.Fatalf("error while declaring rabbitmq queues to db %v", err)
@@ -85,7 +85,7 @@ func main() {
 	// In GRPC cases, the Server is acutally just an Interface
 	// So we need a struct which fulfills the server interface
 	// The register function is a generated piece by protoc.
-	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath, amqpChannel.Channel))
+	pb.RegisterAuthServiceServer(apiServer, services.NewAuthService(dbConn, ath, rmqConn))
 	pb.RegisterPingServiceServer(apiServer, services.NewPingService(dbConn))
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
 	pb.RegisterOfficeServiceServer(apiServer, services.NewOfficeService(dbConn))

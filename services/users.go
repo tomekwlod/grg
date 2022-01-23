@@ -5,7 +5,7 @@ package services
 import (
 	"context"
 
-	"github.com/tomekwlod/grg/db"
+	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/pb"
 	userstore "github.com/tomekwlod/grg/store/user"
 )
