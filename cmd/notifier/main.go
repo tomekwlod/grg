@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -22,12 +23,32 @@ var (
 )
 
 type Sender interface {
-	Send(to, message string) error
+	Send(to []string, template string) error
 }
 
-type User struct{}
+type User struct {
+	Email    string
+	Teams    string
+	Fullname string
+}
 
-func (u *User) notify(sender Sender, to, message string) error {
+func (u *User) notify(sender Sender, message string) error {
+
+	var to []string
+
+	switch sender.(type) {
+	case notifier.EmailNotifier:
+		to = append(to, u.Email)
+	case notifier.TeamsNotifier:
+		to = append(to, u.Teams)
+	default:
+		return errors.New("Couldn't recognise Sender interface")
+	}
+
+	if len(to) == 0 {
+		return errors.New("Expected at least one receiver of a message")
+	}
+
 	return sender.Send(to, message)
 }
 
@@ -45,10 +66,6 @@ func init() {
 }
 
 func main() {
-	// this is just temporary
-	_type := "email"
-	_msg := "a message"
-	_to := "some.email@gmail.com"
 
 	if amqpURL == "" {
 		fmt.Println("RabbitMQ URL is invalid. Double check the env variable AMQP_SERVER_URL")
@@ -69,6 +86,7 @@ func main() {
 	}
 
 	amqpChannel, close, err := rmq.OpenChannel(env.Env("AMQP_SERVER_URL", "amqp://user:pass@127.0.0.1:5672"))
+
 	if err != nil {
 		if close != nil {
 			// when connections is established but the channel cannot be opened
@@ -103,25 +121,6 @@ func main() {
 	log.Println("Successfully connected to RabbitMQ")
 	log.Println("Waiting for messages")
 
-	// Make a channel to receive messages into infinite loop.
-	forever := make(chan bool)
-	go func() {
-		for message := range messages {
-			msg := &rmq.AuthEmailMessage{}
-
-			err := json.Unmarshal(message.Body, msg)
-
-			if err != nil {
-				log.Printf("Error decoding JSON: %s", err)
-			}
-
-			// For example, show received message in a console.
-			log.Printf(" > Received message: %+v\n", msg)
-		}
-	}()
-	<-forever
-	return
-
 	emailNotifier, err := notifier.NewEmailNotifier(emailFrom, emailPassword, emailHost, emailPort)
 	if err != nil {
 		fmt.Printf("Email notifier cannot be initialized, %v\n", err)
@@ -134,18 +133,46 @@ func main() {
 		os.Exit(2)
 	}
 
-	user := &User{}
+	// Make a channel to receive messages into infinite loop.
+	forever := make(chan bool)
+	go func() {
+		for message := range messages {
+			msg := &rmq.AuthMessage{}
 
-	switch _type {
+			err := json.Unmarshal(message.Body, msg)
 
-	case "teams":
+			if err != nil {
+				log.Printf("Error decoding JSON: %s", err)
+			}
 
-		err = user.notify(teamsNotifier, _to, _msg)
-	default:
-		err = user.notify(emailNotifier, _to, _msg)
-	}
+			// For example, show received message in a console.
+			log.Printf(" > Received message: %+v\n", msg)
 
-	if err != nil {
-		fmt.Printf("An error occured when sending a message: %v\n", err)
-	}
+			user := &User{
+				Email:    msg.Email,
+				Teams:    msg.TeamsAccount,
+				Fullname: msg.Fullname,
+			}
+
+			if msg.Email != "" {
+				message, err := emailNotifier.Template(msg.Template, []string{user.Email})
+
+				err = user.notify(emailNotifier, message)
+
+				if err != nil {
+					fmt.Printf("An error occured when sending Email message: %v\n", err)
+				}
+			}
+
+			if msg.TeamsAccount != "" {
+				err = user.notify(teamsNotifier, msg.Template) // TEMPLATE JUST FOR NOW!!!!!!!!!!!!!!
+
+				if err != nil {
+					fmt.Printf("An error occured when sending Teams message: %v\n", err)
+				}
+			}
+		}
+	}()
+	<-forever
+
 }

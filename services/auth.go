@@ -96,7 +96,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 
 	emailMessage := rmq.AuthMessage{
 		Email:    user.Email,
-		Template: "registration",
+		Template: "login",
 	}
 
 	bodyJson, err := json.Marshal(emailMessage)

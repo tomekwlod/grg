@@ -7,9 +7,10 @@ import (
 )
 
 type AuthMessage struct {
-	Email    string
-	Fullname string
-	Template string // it can be login, registration, forgot password, etc
+	Email        string
+	TeamsAccount string
+	Fullname     string
+	Template     string // it can be login, registration, forgot password, etc
 }
 
 type Conn struct {
