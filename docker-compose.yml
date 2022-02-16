@@ -3,11 +3,11 @@ version: '3.1'
 services:
 
   rabbit:
-    container_name: rabbit
+    container_name: grg-rabbit
     image: rabbitmq:3.8-management-alpine
     ports:
-      - 5672:5672
-      - 15672:15672
+      - 5673:5672
+      - 15673:15672
     volumes:
       - ../docker_data/grg/rabbitmq/data/:/var/lib/rabbitmq/
       - ../docker_data/grg/rabbitmq/logs/:/var/log/rabbitmq/
@@ -20,11 +20,11 @@ services:
     networks:
       - grg-network
   postgres:
-    container_name: postgres
+    container_name: grg-postgres
     image: postgres:9.6.24
     restart: unless-stopped
     ports: 
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
@@ -35,7 +35,7 @@ services:
       - grg-network
 
   pgadmin:
-    container_name: pgadmin
+    container_name: grg-pgadmin
     image: dpage/pgadmin4:6.4
     environment:
       PGADMIN_DEFAULT_EMAIL: "twl@phase-ii.com"
@@ -44,7 +44,7 @@ services:
        - ../docker_data/grg/.pgadmin:/root/.pgadmin
        - ../docker_data/grg/pgadmin:/var/lib/pgadmin
     ports:
-      - "5050:80"
+      - "5053:80"
     networks:
       - grg-network
     restart: unless-stopped

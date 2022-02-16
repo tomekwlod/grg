@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -12,6 +13,7 @@ import (
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/internal/db"
 	"github.com/tomekwlod/grg/internal/rmq"
+	grpclib "github.com/tomekwlod/grg/libs/grpc"
 	"github.com/tomekwlod/grg/pb"
 	userstore "github.com/tomekwlod/grg/store/user"
 	"google.golang.org/grpc/codes"
@@ -91,12 +93,17 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Errorf(codes.Internal, "couldn't generate new token for user %s", user.Email)
 	}
 
+	// setting cookie - example
 	// md := metadata.New(map[string]string{"Set-Cookie": fmt.Sprintf("jwt=%s; Path=/; HttpOnly", token)})
 	// grpc.SendHeader(ctx, md)
 
+	headers := grpclib.ReadFromContext(ctx)
+
 	emailMessage := rmq.AuthMessage{
-		Email:    user.Email,
-		Template: "login",
+		Origin:  headers.Origin,
+		Project: os.Getenv("PROJECT_NAME"),
+		IP:      strings.Join(headers.IPs, ", "),
+		Email:   user.Email,
 	}
 
 	bodyJson, err := json.Marshal(emailMessage)
@@ -106,7 +113,7 @@ func (as *AuthService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.Log
 		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
 	}
 
-	if err = as.rmq.PublishMessage("auth", bodyJson); err != nil {
+	if err = as.rmq.PublishMessage("auth.login", bodyJson); err != nil {
 		log.Printf("error while sending message to rabbitmq channel %v", err)
 		// return err
 	}
@@ -152,9 +159,13 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 		return nil, status.Errorf(codes.Internal, "couldn't create a new user, %s", errorMessage)
 	}
 
+	headers := grpclib.ReadFromContext(ctx)
+
 	emailMessage := rmq.AuthMessage{
-		Email:    user.Email,
-		Template: "login",
+		Origin:  headers.Origin,
+		Project: os.Getenv("PROJECT_NAME"),
+		IP:      strings.Join(headers.IPs, ", "),
+		Email:   user.Email,
 	}
 
 	bodyJson, err := json.Marshal(emailMessage)
@@ -164,7 +175,7 @@ func (as *AuthService) Register(ctx context.Context, req *pb.RegisterRequest) (*
 		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
 	}
 
-	if err = as.rmq.PublishMessage("auth", bodyJson); err != nil {
+	if err = as.rmq.PublishMessage("auth.register", bodyJson); err != nil {
 		log.Printf("error while sending message to rabbitmq channel %v", err)
 		// return err
 	}

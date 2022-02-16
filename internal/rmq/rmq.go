@@ -7,10 +7,11 @@ import (
 )
 
 type AuthMessage struct {
-	Email        string
-	TeamsAccount string
-	Fullname     string
-	Template     string // it can be login, registration, forgot password, etc
+	Origin   string
+	Project  string
+	IP       string
+	Email    string
+	Fullname string
 }
 
 type Conn struct {
@@ -18,29 +19,23 @@ type Conn struct {
 }
 
 func (c *Conn) DeclareQueues() error {
-	_, err := c.QueueDeclare(
-		"auth", // queue name
-		true,   // durable
-		false,  // auto delete
-		false,  // exclusive
-		false,  // no wait
-		nil,    // arguments
-	)
 
-	// if err != nil {
-	// 	return err
-	// }
+	for _, q := range []string{"auth.login", "auth.register", "auth.forgot"} {
+		_, err := c.QueueDeclare(
+			q,     // queue name
+			true,  // durable
+			false, // auto delete
+			false, // exclusive
+			false, // no wait
+			nil,   // arguments
+		)
 
-	// _, err = c.QueueDeclare(
-	// 	"auth.register", // queue name
-	// 	true,            // durable
-	// 	false,           // auto delete
-	// 	false,           // exclusive
-	// 	false,           // no wait
-	// 	nil,             // arguments
-	// )
+		if err != nil {
+			return err
+		}
+	}
 
-	return err
+	return nil
 }
 
 func (c *Conn) PublishMessage(queueName string, msg []byte) error {

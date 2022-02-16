@@ -127,11 +127,11 @@ func main() {
 		os.Exit(2)
 	}
 
-	teamsNotifier, err := notifier.NewTeamsNotifier()
-	if err != nil {
-		fmt.Printf("Teams notifier cannot be initialized, %v", err)
-		os.Exit(2)
-	}
+	// teamsNotifier, err := notifier.NewTeamsNotifier()
+	// if err != nil {
+	// 	fmt.Printf("Teams notifier cannot be initialized, %v", err)
+	// 	os.Exit(2)
+	// }
 
 	// Make a channel to receive messages into infinite loop.
 	forever := make(chan bool)
@@ -149,28 +149,30 @@ func main() {
 			log.Printf(" > Received message: %+v\n", msg)
 
 			user := &User{
-				Email:    msg.Email,
-				Teams:    msg.TeamsAccount,
+				Email: msg.Email,
+				// Teams:    msg.TeamsAccount,
 				Fullname: msg.Fullname,
 			}
 
 			if msg.Email != "" {
-				message, err := emailNotifier.Template(msg.Template, []string{user.Email})
-
+				// message, err := emailNotifier.Template(msg.Template, []string{user.Email})
+				message := "replace me with a proper text...."
 				err = user.notify(emailNotifier, message)
+				// err = user.notify(emailNotifier, message)
 
 				if err != nil {
 					fmt.Printf("An error occured when sending Email message: %v\n", err)
 				}
 			}
 
-			if msg.TeamsAccount != "" {
-				err = user.notify(teamsNotifier, msg.Template) // TEMPLATE JUST FOR NOW!!!!!!!!!!!!!!
+			// if msg.TeamsAccount != "" {
+			// 	message := "replace me with a proper text...."
+			// 	err = user.notify(teamsNotifier, message) // TEMPLATE JUST FOR NOW!!!!!!!!!!!!!!
 
-				if err != nil {
-					fmt.Printf("An error occured when sending Teams message: %v\n", err)
-				}
-			}
+			// 	if err != nil {
+			// 		fmt.Printf("An error occured when sending Teams message: %v\n", err)
+			// 	}
+			// }
 		}
 	}()
 	<-forever
