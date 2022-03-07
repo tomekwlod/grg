@@ -90,7 +90,7 @@ func main() {
 	pb.RegisterUserServiceServer(apiServer, services.NewUserService(dbConn))
 	pb.RegisterOfficeServiceServer(apiServer, services.NewOfficeService(dbConn))
 	pb.RegisterResourceServiceServer(apiServer, services.NewResourceService(dbConn))
-	pb.RegisterOrderServiceServer(apiServer, services.NewOrderService(dbConn))
+	pb.RegisterOrderServiceServer(apiServer, services.NewOrderService(dbConn, rmqConn))
 	pb.RegisterMonitorServiceServer(apiServer, new(services.MonitorService)) // if there is no costructor
 	// pb.RegisterUserServiceServer(apiServer, new(services.UserService)) // if there is no costructor
 

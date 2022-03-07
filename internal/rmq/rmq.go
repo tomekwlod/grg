@@ -14,13 +14,22 @@ type AuthMessage struct {
 	Fullname string
 }
 
+type EmailMessage struct {
+	Origin   string
+	Project  string
+	IP       string
+	Email    string
+	Fullname string
+	Message  string
+}
+
 type Conn struct {
 	*amqp.Channel
 }
 
 func (c *Conn) DeclareQueues() error {
 
-	for _, q := range []string{"auth.login", "auth.register", "auth.forgot"} {
+	for _, q := range []string{"auth.login", "auth.register", "auth.forgot", "email.simple"} {
 		_, err := c.QueueDeclare(
 			q,     // queue name
 			true,  // durable

@@ -2,7 +2,9 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -10,20 +12,24 @@ import (
 	"github.com/tomekwlod/grg/auth"
 	"github.com/tomekwlod/grg/core"
 	"github.com/tomekwlod/grg/internal/db"
+	"github.com/tomekwlod/grg/internal/rmq"
+	grpclib "github.com/tomekwlod/grg/libs/grpc"
 	"github.com/tomekwlod/grg/pb"
 	orderstore "github.com/tomekwlod/grg/store/order"
+	userstore "github.com/tomekwlod/grg/store/user"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-func NewOrderService(db *db.DB) *OrderService {
-	return &OrderService{db: db}
+func NewOrderService(db *db.DB, rmq *rmq.Conn) *OrderService {
+	return &OrderService{db: db, rmq: rmq}
 }
 
 // implements methods that are intercepted by AuthFunc - only authenticated access!
 type OrderService struct {
 	pb.UnimplementedOrderServiceServer
-	db *db.DB
+	db  *db.DB
+	rmq *rmq.Conn
 }
 
 // This is to allow unauthenticated access!
@@ -42,6 +48,12 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 	}
 	if req.GetStartAt() <= 0 {
 		return nil, status.Errorf(codes.InvalidArgument, "validation error; `startAt` parameter needs to be provided and higher than zero")
+	}
+	if req.GetOfficeId() == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "validation error; `officeId` parameter needs to be provided")
+	}
+	if req.GetResourceId() == 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "validation error; `resourceId` parameter needs to be provided")
 	}
 
 	// getting UID from auth context
@@ -94,6 +106,47 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 
 		return nil, status.Errorf(codes.Internal, "couldn't create a new booking, %s", errorMessage)
 	}
+
+	headers := grpclib.ReadFromContext(ctx)
+
+	store := userstore.New(as.db)
+
+	user, err := store.FindOne(ctx, uid)
+
+	if err != nil {
+		log.Printf("%v", err)
+		// this should not break the request... but for now...
+		return nil, status.Error(codes.Internal, "error when getting user in order to send him a message")
+	}
+
+	// sending a queue message
+	emailMessage := rmq.EmailMessage{
+		Origin:  headers.Origin,
+		Project: os.Getenv("PROJECT_NAME"),
+		IP:      strings.Join(headers.IPs, ", "),
+		Email:   user.Email,
+		Message: `This is a custom message that will be sent to the provided email address
+and this is a second line
+
+and the fourth one.
+
+Best regards,
+John Doe`,
+	}
+
+	bodyJson, err := json.Marshal(emailMessage)
+
+	if err != nil {
+		log.Printf("%v", err)
+		// this should not break the request... but for now...
+		return nil, status.Error(codes.Internal, "error encoding json for the amqp message")
+	}
+
+	if err = as.rmq.PublishMessage("email.simple", bodyJson); err != nil {
+		log.Printf("error while sending message to rabbitmq channel %v", err)
+		// return err
+	}
+	// end sending a queue message
 
 	return &pb.Order{
 		Id:      order.ID,

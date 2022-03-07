@@ -8,6 +8,7 @@ import (
 
 type UserStore interface {
 	Create(context.Context, *User) error
+	FindOne(ctx context.Context, id int64) (*User, error)
 	FindByEmail(ctx context.Context, email string) (*User, error)
 	List(ctx context.Context) ([]*User, error)
 }
