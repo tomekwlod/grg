@@ -125,10 +125,10 @@ func (as *OrderService) Create(ctx context.Context, req *pb.CreateOrderRequest) 
 		Project: os.Getenv("PROJECT_NAME"),
 		IP:      strings.Join(headers.IPs, ", "),
 		Email:   user.Email,
-		Message: `This is a custom message that will be sent to the provided email address
-and this is a second line
+		Subject: `A booking created! We can't wait to see you!`,
+		Message: `You have just made a booking with us! Nice one!
 
-and the fourth one.
+These are the details of your booking. Szhould you have any questions do not hesitate to contact us!
 
 Best regards,
 John Doe`,

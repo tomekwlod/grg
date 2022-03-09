@@ -15,12 +15,13 @@ type AuthMessage struct {
 }
 
 type EmailMessage struct {
-	Origin   string
-	Project  string
-	IP       string
-	Email    string
-	Fullname string
-	Message  string
+	Origin,
+	Project,
+	IP,
+	Email,
+	Fullname,
+	Subject,
+	Message string
 }
 
 type Conn struct {
